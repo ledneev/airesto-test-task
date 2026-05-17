@@ -2,19 +2,19 @@
 import TheHeader from './components/TheHeader.vue'
 import DatePicker from './components/DatePicker.vue'
 import ZoneFilter from './components/ZoneFilter.vue'
+import BookingTable from './components/BookingTable/BookingTable.vue'
 </script>
 
 <template>
   <div class="app">
     <TheHeader />
-
     <main class="main">
       <h1 class="main__title">Бронирования</h1>
-
       <div class="main__controls">
         <DatePicker />
         <ZoneFilter />
       </div>
+      <BookingTable />
     </main>
   </div>
 </template>
