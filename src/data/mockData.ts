@@ -1,0 +1,245 @@
+import type { BookingResponse } from '../types'
+
+export const mockData: BookingResponse = {
+  available_days: [
+    '2025-04-04',
+    '2025-04-05',
+    '2025-04-06',
+    '2025-04-07',
+    '2025-04-08',
+  ],
+  current_day: '2025-04-04',
+  restaurant: {
+    id: 11100,
+    timezone: 'Asia/Vladivostok',
+    restaurant_name: 'Супра',
+    opening_time: '11:00',
+    closing_time: '23:40',
+  },
+  tables: [
+    {
+      id: 'table-1',
+      capacity: 4,
+      number: '5',
+      zone: '1 этаж',
+      orders: [
+        {
+          id: 'order-1',
+          status: 'New',
+          start_time: '2025-04-04T13:00:00+10:00',
+          end_time: '2025-04-04T14:00:00+10:00',
+        },
+        {
+          id: 'order-2',
+          status: 'Closed',
+          start_time: '2025-04-04T14:30:00+10:00',
+          end_time: '2025-04-04T18:00:00+10:00',
+        },
+        {
+          id: 'order-3',
+          status: 'Banquet',
+          start_time: '2025-04-04T16:30:00+10:00',
+          end_time: '2025-04-04T17:45:00+10:00',
+        },
+      ],
+      reservations: [
+        {
+          id: 1,
+          name_for_reservation: 'Алина',
+          num_people: 6,
+          phone_number: '+79999999999',
+          status: 'Новая',
+          seating_time: '2025-04-04T15:40:00+10:00',
+          end_time: '2025-04-04T16:30:00+10:00',
+        },
+      ],
+    },
+    {
+      id: 'table-2',
+      capacity: 4,
+      number: '6',
+      zone: '1 этаж',
+      orders: [
+        {
+          id: 'order-4',
+          status: 'Bill',
+          start_time: '2025-04-04T13:00:00+10:00',
+          end_time: '2025-04-04T14:00:00+10:00',
+        },
+        {
+          id: 'order-5',
+          status: 'Closed',
+          start_time: '2025-04-04T14:30:00+10:00',
+          end_time: '2025-04-04T15:30:00+10:00',
+        },
+        {
+          id: 'order-6',
+          status: 'Closed',
+          start_time: '2025-04-04T15:15:00+10:00',
+          end_time: '2025-04-04T16:00:00+10:00',
+        },
+      ],
+      reservations: [],
+    },
+    {
+      id: 'table-3',
+      capacity: 4,
+      number: '155',
+      zone: '1 этаж',
+      orders: [
+        {
+          id: 'order-7',
+          status: 'New',
+          start_time: '2025-04-04T14:30:00+10:00',
+          end_time: '2025-04-04T20:00:00+10:00',
+        },
+      ],
+      reservations: [
+        {
+          id: 2,
+          name_for_reservation: 'Миша',
+          num_people: 4,
+          phone_number: '+79999999999',
+          status: 'Живая очередь',
+          seating_time: '2025-04-04T18:50:00+10:00',
+          end_time: '2025-04-04T20:00:00+10:00',
+        },
+      ],
+    },
+    {
+      id: 'table-4',
+      capacity: 6,
+      number: '20',
+      zone: '2 этаж',
+      orders: [],
+      reservations: [
+        {
+          id: 3,
+          name_for_reservation: 'Миша',
+          num_people: 4,
+          phone_number: '+79999999999',
+          status: 'Живая очередь',
+          seating_time: '2025-04-04T13:00:00+10:00',
+          end_time: '2025-04-04T14:00:00+10:00',
+        },
+        {
+          id: 4,
+          name_for_reservation: 'Алина',
+          num_people: 6,
+          phone_number: '+79999999999',
+          status: 'Заявка',
+          seating_time: '2025-04-04T20:00:00+10:00',
+          end_time: '2025-04-04T22:00:00+10:00',
+        },
+      ],
+    },
+    {
+      id: 'table-5',
+      capacity: 6,
+      number: '21',
+      zone: '2 этаж',
+      orders: [],
+      reservations: [
+        {
+          id: 5,
+          name_for_reservation: 'Алина',
+          num_people: 6,
+          phone_number: '+79999999999',
+          status: 'Новая',
+          seating_time: '2025-04-04T13:00:00+10:00',
+          end_time: '2025-04-04T14:00:00+10:00',
+        },
+        {
+          id: 6,
+          name_for_reservation: 'Самира',
+          num_people: 2,
+          phone_number: '+79999999999',
+          status: 'Закрыт',
+          seating_time: '2025-04-04T20:00:00+10:00',
+          end_time: '2025-04-04T22:00:00+10:00',
+        },
+      ],
+    },
+    {
+      id: 'table-6',
+      capacity: 3,
+      number: '22',
+      zone: '2 этаж',
+      orders: [
+        {
+          id: 'order-8',
+          status: 'Closed',
+          start_time: '2025-04-04T14:30:00+10:00',
+          end_time: '2025-04-04T17:30:00+10:00',
+        },
+      ],
+      reservations: [
+        {
+          id: 7,
+          name_for_reservation: 'Алина',
+          num_people: 6,
+          phone_number: '+79999999999',
+          status: 'Открыт',
+          seating_time: '2025-04-04T13:00:00+10:00',
+          end_time: '2025-04-04T14:00:00+10:00',
+        },
+      ],
+    },
+    {
+      id: 'table-7',
+      capacity: 4,
+      number: '29',
+      zone: '2 этаж',
+      orders: [
+        {
+          id: 'order-9',
+          status: 'Closed',
+          start_time: '2025-04-04T12:06:00+10:00',
+          end_time: '2025-04-04T12:51:00+10:00',
+        },
+        {
+          id: 'order-10',
+          status: 'Bill',
+          start_time: '2025-04-04T13:17:00+10:00',
+          end_time: '2025-04-04T14:12:00+10:00',
+        },
+      ],
+      reservations: [
+        {
+          id: 8,
+          name_for_reservation: 'Максим',
+          num_people: 4,
+          phone_number: '+79999999999',
+          status: 'Заявка',
+          seating_time: '2025-04-04T20:15:00+10:00',
+          end_time: '2025-04-04T22:45:00+10:00',
+        },
+      ],
+    },
+    {
+      id: 'table-8',
+      capacity: 4,
+      number: '30',
+      zone: 'Банкетный зал',
+      orders: [
+        {
+          id: 'order-11',
+          status: 'New',
+          start_time: '2025-04-04T14:28:00+10:00',
+          end_time: '2025-04-04T17:17:00+10:00',
+        },
+      ],
+      reservations: [
+        {
+          id: 9,
+          name_for_reservation: 'Залия',
+          num_people: 4,
+          phone_number: '+79999999999',
+          status: 'Новая',
+          seating_time: '2025-04-04T20:00:00+10:00',
+          end_time: '2025-04-04T22:30:00+10:00',
+        },
+      ],
+    },
+  ],
+}
