@@ -1,0 +1,43 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --color-bg: #0f1117;
+  --color-bg-secondary: #1a1d27;
+  --color-bg-hover: rgba(255, 255, 255, 0.05);
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-text: #e8e8e8;
+  --color-text-muted: #6b7280;
+  --color-accent: #3b82f6;
+  --color-order-new: #1a3a4a;
+  --color-order-bill: #2d3748;
+  --color-order-closed: #1e2d3d;
+  --color-order-banquet: #7B439E;
+  --color-reservation-queue: #1a3a2a;
+  --color-reservation-new: #3d2010;
+  --color-reservation-application: #1a2a3a;
+  --color-reservation-open: #1a3a4a;
+  --color-reservation-closed: #2a1a1a;
+}
+
+html, body {
+  height: 100%;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+}
+
+#app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+}
