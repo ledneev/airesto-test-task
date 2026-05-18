@@ -1,7 +1,29 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import { useBookingStore } from "../stores/bookingStore";
 
 const store = useBookingStore();
+
+const isDark = ref(true);
+
+function toggleTheme() {
+  isDark.value = !isDark.value;
+  const html = document.documentElement;
+  if (isDark.value) {
+    html.classList.remove('theme-light');
+  } else {
+    html.classList.add('theme-light');
+  }
+  localStorage.setItem('theme', isDark.value ? 'dark' : 'light');
+}
+
+onMounted(() => {
+  const saved = localStorage.getItem('theme');
+  if (saved === 'light') {
+    isDark.value = false;
+    document.documentElement.classList.add('theme-light');
+  }
+});
 </script>
 
 <template>
@@ -15,7 +37,7 @@ const store = useBookingStore();
     </div>
 
     <div class="header__actions">
-      <button class="header__btn">
+      <button class="header__btn" @click="toggleTheme" title="Переключить тему">
         <img src="../assets/img/theme.svg" alt="Переключить тему" />
       </button>
       <button class="header__btn">
@@ -65,5 +87,10 @@ const store = useBookingStore();
 
 .header__btn:hover {
   background: var(--color-bg-hover);
+}
+
+.header__btn:first-child img {
+  width: 24px;
+  height: 24px;
 }
 </style>

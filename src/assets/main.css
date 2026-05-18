@@ -84,6 +84,33 @@
   --color-reservation-border: #ff7043;
 }
 
+html.theme-light {
+  --color-bg: #f8f9fa;
+  --color-bg-secondary: #ffffff;
+  --color-bg-hover: rgba(0, 0, 0, 0.05);
+  --color-border: rgba(0, 0, 0, 0.1);
+  --color-text: #1a1a1a;
+  --color-text-muted: #6b7280;
+  --color-accent: #3b82f6;
+  --color-order-new: #d1ecf1;
+  --color-order-bill: #d1ecf1;
+  --color-order-closed: #d1ecf1;
+  --color-order-banquet: #e8d6f0;
+  --color-reservation-queue: #d1f2eb;
+  --color-reservation-new: #fce5cd;
+  --color-reservation-application: #d1e7ff;
+  --color-reservation-open: #d1ecf1;
+  --color-reservation-closed: #f8d7da;
+  --color-order-bg: rgba(127, 215, 204, 0.08);
+  --color-order-border: #5ac7b8;
+  --color-banquet-bg: rgba(179, 72, 247, 0.08);
+  --color-banquet-border: #9b59b6;
+  --color-queue-bg: rgba(0, 151, 253, 0.08);
+  --color-queue-border: #3498db;
+  --color-reservation-bg: rgba(255, 112, 67, 0.08);
+  --color-reservation-border: #e67e22;
+}
+
 html,
 body {
   height: 100%;
