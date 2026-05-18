@@ -1,21 +1,40 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref } from 'vue'
-import { useBookingStore } from '../../stores/bookingStore'
-import { mergeEvents, positionEvents } from '../../utils/layout'
-import { generateTimeSlots } from '../../utils/time'
-import EventCard from './EventCard.vue'
+import { computed, ref, onMounted, onUnmounted, nextTick } from "vue";
+import { useBookingStore } from "../../stores/bookingStore";
+import { mergeEvents, positionEvents } from "../../utils/layout";
+import {
+  generateTimeSlots,
+  getRestaurantTime,
+  timeStringToMinutes,
+} from "../../utils/time";
+import EventCard from "./EventCard.vue";
 
-const store = useBookingStore()
+const store = useBookingStore();
+
+const tableRef = ref<HTMLElement>();
+const containerWidth = ref(0);
+
+const SLOT_HEIGHT = 60;
 
 const timeSlots = computed(() =>
   generateTimeSlots(
     store.restaurant.opening_time,
     store.restaurant.closing_time,
-  )
-)
+  ),
+);
+
+const columnHeight = computed(() => timeSlots.value.length * SLOT_HEIGHT);
+
+const colWidth = computed(() => {
+  const timeColWidth = 60;
+  const available = containerWidth.value - timeColWidth;
+  const count = tablesWithEvents.value.length;
+  if (count === 0) return 160;
+  return Math.max(120, available / count);
+});
 
 const tablesWithEvents = computed(() =>
-  store.filteredTables.map(table => ({
+  store.filteredTables.map((table) => ({
     table,
     events: positionEvents(
       mergeEvents(table, store.selectedDate),
@@ -23,44 +42,80 @@ const tablesWithEvents = computed(() =>
       store.restaurant.closing_time,
       store.restaurant.timezone,
     ),
-  }))
-)
+  })),
+);
 
-const scrollContainer = ref<HTMLElement>()
+let resizeObserver: ResizeObserver | null = null;
 
-  onMounted(async () => {
-  await nextTick()
-  if (!scrollContainer.value) return
+const currentTimePercent = ref<number | null>(null);
+
+function updateCurrentTime() {
+  const now = getRestaurantTime(store.restaurant.timezone);
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  const currentMin = hours * 60 + minutes;
+
+  const openingMin = timeStringToMinutes(store.restaurant.opening_time);
+  const closingMin = timeStringToMinutes(store.restaurant.closing_time);
+
+
+  if (currentMin < openingMin || currentMin > closingMin) {
+    currentTimePercent.value = null;
+    return;
+  }
+
+  currentTimePercent.value =
+    ((currentMin - openingMin) / (closingMin - openingMin)) * 100;
+}
+
+let timeInterval: ReturnType<typeof setInterval>;
+
+onMounted(async () => {
+  await nextTick();
+
+  if (!tableRef.value) return;
+
+  resizeObserver = new ResizeObserver((entries) => {
+    containerWidth.value = entries[0].contentRect.width;
+  });
+  resizeObserver.observe(tableRef.value);
 
   const openingSlot = timeSlots.value.findIndex(
-    slot => slot === store.restaurant.opening_time
-  )
+    (slot) => slot === store.restaurant.opening_time,
+  );
   if (openingSlot !== -1) {
-    scrollContainer.value.scrollTop = openingSlot * SLOT_HEIGHT
+    tableRef.value.scrollTop = openingSlot * SLOT_HEIGHT;
   }
-})
 
-const SLOT_HEIGHT = 60
-const columnHeight = computed(() => timeSlots.value.length * SLOT_HEIGHT)
+  updateCurrentTime();
+  timeInterval = setInterval(updateCurrentTime, 60_000);
+});
+
+onUnmounted(() => {
+  resizeObserver?.disconnect();
+  clearInterval(timeInterval);
+});
 </script>
 
 <template>
   <div class="booking-table">
-
-    <div class="booking-table__scroll" ref="scrollContainer">
+    <div class="booking-table__scroll" ref="tableRef">
       <table class="booking-table__inner">
-
         <thead class="booking-table__head">
           <tr>
             <th class="booking-table__time-header"></th>
-
             <th
               v-for="{ table } in tablesWithEvents"
               :key="table.id"
               class="booking-table__col-header"
+              :style="{ width: `${colWidth}px`, minWidth: `${colWidth}px` }"
             >
-              <span class="booking-table__table-number">#{{ table.number }}</span>
-              <span class="booking-table__table-capacity">{{ table.capacity }} чел</span>
+              <span class="booking-table__table-number"
+                >#{{ table.number }}</span
+              >
+              <span class="booking-table__table-capacity"
+                >{{ table.capacity }} чел</span
+              >
               <span class="booking-table__table-zone">{{ table.zone }}</span>
             </th>
           </tr>
@@ -88,6 +143,7 @@ const columnHeight = computed(() => timeSlots.value.length * SLOT_HEIGHT)
               v-for="{ table, events } in tablesWithEvents"
               :key="table.id"
               class="booking-table__col"
+              :style="{ width: `${colWidth}px`, minWidth: `${colWidth}px` }"
             >
               <div
                 class="booking-table__col-inner"
@@ -100,6 +156,12 @@ const columnHeight = computed(() => timeSlots.value.length * SLOT_HEIGHT)
                   :style="{ height: `${SLOT_HEIGHT}px` }"
                 />
 
+                <div
+                  v-if="currentTimePercent !== null"
+                  class="booking-table__current-time"
+                  :style="{ top: `${currentTimePercent}%` }"
+                />
+
                 <EventCard
                   v-for="event in events"
                   :key="event.id"
@@ -109,10 +171,8 @@ const columnHeight = computed(() => timeSlots.value.length * SLOT_HEIGHT)
             </td>
           </tr>
         </tbody>
-
       </table>
     </div>
-
   </div>
 </template>
 
@@ -121,6 +181,7 @@ const columnHeight = computed(() => timeSlots.value.length * SLOT_HEIGHT)
   flex: 1;
   overflow: hidden;
   position: relative;
+  min-height: 0;
 }
 
 .booking-table__scroll {
@@ -132,6 +193,7 @@ const columnHeight = computed(() => timeSlots.value.length * SLOT_HEIGHT)
 .booking-table__inner {
   border-collapse: collapse;
   table-layout: fixed;
+  width: 100%;
   min-width: max-content;
 }
 
@@ -152,8 +214,6 @@ const columnHeight = computed(() => timeSlots.value.length * SLOT_HEIGHT)
 }
 
 .booking-table__col-header {
-  width: 160px;
-  min-width: 160px;
   padding: 8px 12px;
   text-align: left;
   border-left: 1px solid var(--color-border);
@@ -195,7 +255,6 @@ const columnHeight = computed(() => timeSlots.value.length * SLOT_HEIGHT)
   padding-right: 8px;
   font-size: 11px;
   color: var(--color-text-muted);
-  text-align: right;
   justify-content: flex-end;
   border-top: 1px solid var(--color-border);
 }
@@ -203,8 +262,6 @@ const columnHeight = computed(() => timeSlots.value.length * SLOT_HEIGHT)
 .booking-table__col {
   vertical-align: top;
   border-left: 1px solid var(--color-border);
-  width: auto;
-  min-width: 160px;
 }
 
 .booking-table__col-inner {
@@ -215,5 +272,35 @@ const columnHeight = computed(() => timeSlots.value.length * SLOT_HEIGHT)
 .booking-table__grid-line {
   border-top: 1px solid var(--color-border);
   width: 100%;
+}
+
+.booking-table__current-time {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #ef4444;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.booking-table__current-time::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  top: -3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ef4444;
+}
+
+.booking-table__current-time-indicator {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #ef4444;
+  pointer-events: none;
 }
 </style>

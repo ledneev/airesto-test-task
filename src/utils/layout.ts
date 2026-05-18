@@ -46,11 +46,6 @@ function startDiffMinutes(
   )
 }
 
-interface EventGroup {
-  columns: CalendarEvent[][]
-  offsetPx: number
-}
-
 export function positionEvents(
   events: CalendarEvent[],
   openingTime: string,
@@ -104,10 +99,6 @@ export function positionEvents(
       }
       if (!placed) packs.push([event])
     }
-  events.forEach(e => {
-  console.log(e.start_time, '->', isoToMinutes(e.start_time, timezone))
-})
-console.log('opening->', openingMin, 'closing->', closingMin)
 
     packs.forEach((pack, packIndex) => {
       const colCount = pack.length

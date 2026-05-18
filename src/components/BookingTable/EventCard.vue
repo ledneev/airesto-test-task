@@ -46,7 +46,6 @@ function formatTime(iso: string): string {
 
 const eventStyle = styleMap[props.event.status] ?? styleMap['New']
 const statusLabel = labelMap[props.event.status] ?? props.event.status
-const isReservation = props.event.type === 'reservation'
 const isBanquet = props.event.status === 'Banquet'
 const isOrder = props.event.type === 'order' && !isBanquet
 </script>
