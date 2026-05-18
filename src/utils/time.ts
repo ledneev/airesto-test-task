@@ -15,8 +15,8 @@ export function getRestaurantTime(timezone: string): Date {
 }
 
 export function timeStringToMinutes(time: string): number {
-  const [hours, minutes] = time.split(":").map(Number);
-  return hours * 60 * minutes;
+  const [hours, minutes] = time.split(':').map(Number)
+  return hours * 60 + minutes
 }
 
 export function isoToMinutes(isoString: string, timezone: string): number {
@@ -61,13 +61,15 @@ export function generateTimeSlots(
   closingTime: string,
   stepMinutes = 30,
 ): string[] {
-  const start = timeStringToMinutes(openingTime);
-  const end = timeStringToMinutes(closingTime);
-  const slots: string[] = [];
+  const start = timeStringToMinutes(openingTime)
+  const end = timeStringToMinutes(closingTime)
+  const slots: string[] = []
 
-  for (let m = start; m <= end; m += stepMinutes) {
-    slots.push(minutesToTimeString(m));
+  const maxSlots = (24 * 60) / stepMinutes
+
+  for (let m = start; m <= end && slots.length <= maxSlots; m += stepMinutes) {
+    slots.push(minutesToTimeString(m))
   }
 
-  return slots;
+  return slots
 }
