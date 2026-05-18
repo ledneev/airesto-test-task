@@ -182,3 +182,6 @@ button {
 .booking-table__scroll::-webkit-scrollbar-corner {
   background: transparent;
 }
+
+/* Адаптивные стили для мобильных устройств */
+@import './responsive.css';

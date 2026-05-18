@@ -1,0 +1,286 @@
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden;
+  }
+
+  #app {
+    min-width: 320px;
+  }
+
+  .header {
+    padding: 8px 12px !important;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .header__brand {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .header__logo {
+    font-size: 14px;
+  }
+
+  .header__restaurant {
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+  }
+
+  .header__separator {
+    display: none;
+  }
+
+  .header__actions {
+    width: 100%;
+    justify-content: space-between;
+    order: 3;
+    margin-top: 8px;
+  }
+
+  .header__search-wrapper {
+    flex: 1;
+    margin-right: 8px !important;
+  }
+
+  .header__search {
+    width: 100% !important;
+    max-width: none;
+    padding: 6px 10px !important;
+  }
+
+  .header__search-input {
+    font-size: 13px;
+  }
+
+  .header__search-input::placeholder {
+    font-size: 12px;
+  }
+
+  .header__btn {
+    height: 36px !important;
+    font-size: 13px;
+  }
+
+  .header__btn--theme {
+    width: 36px !important;
+    min-width: 36px !important;
+  }
+
+  .header__btn--theme .icon-svg {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  .header__btn--exit {
+    padding: 6px 12px !important;
+    white-space: nowrap;
+  }
+
+  .booking-table {
+    font-size: 12px;
+  }
+
+  .booking-table__scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .booking-table__time-header,
+  .booking-table__time-col {
+    width: 50px !important;
+    min-width: 50px !important;
+  }
+
+  .booking-table__col-header {
+    padding: 6px 8px !important;
+    min-width: 100px;
+  }
+
+  .booking-table__table-number {
+    font-size: 12px !important;
+  }
+
+  .booking-table__table-capacity,
+  .booking-table__table-zone {
+    font-size: 10px !important;
+  }
+
+  .booking-table__time-slot {
+    font-size: 10px !important;
+    padding-right: 4px !important;
+  }
+
+  .event-card {
+    min-height: 18px;
+  }
+
+  .event-card__content {
+    padding: 3px 4px !important;
+  }
+
+  .event-card__type,
+  .event-card__name,
+  .event-card__table,
+  .event-card__phone,
+  .event-card__time {
+    font-size: 10px !important;
+    line-height: 12px !important;
+  }
+
+  .event-card__status-badge {
+    font-size: 7px !important;
+    padding: 1px 3px !important;
+  }
+
+  .event-card__phone .icon-svg {
+    width: 8px !important;
+    height: 8px !important;
+  }
+
+  .date-picker,
+  .zone-filter {
+    padding: 8px 12px !important;
+  }
+
+  .date-picker__nav-btn,
+  .zone-filter__toggle {
+    padding: 6px 10px !important;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 6px 8px !important;
+  }
+
+  .header__restaurant {
+    max-width: 120px;
+  }
+
+  .header__actions {
+    gap: 8px;
+  }
+
+  .header__search {
+    padding: 5px 8px !important;
+  }
+
+  .header__search-input {
+    font-size: 12px;
+  }
+
+  .header__btn {
+    height: 34px !important;
+    padding: 4px 8px !important;
+  }
+
+  .header__btn--theme {
+    width: 34px !important;
+    min-width: 34px !important;
+  }
+
+  .header__btn--theme .icon-svg {
+    width: 26px !important;
+    height: 26px !important;
+  }
+
+  .header__btn--exit span {
+    font-size: 12px;
+  }
+
+  .booking-table__time-header,
+  .booking-table__time-col {
+    width: 45px !important;
+    min-width: 45px !important;
+  }
+
+  .booking-table__col-header {
+    padding: 4px 6px !important;
+    min-width: 90px;
+  }
+
+  .booking-table__table-number {
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .header__restaurant {
+    max-width: 100px;
+    font-size: 11px;
+  }
+
+  .header__logo {
+    font-size: 13px;
+  }
+
+  .header__btn--exit span {
+    display: none;
+  }
+
+  .header__btn--exit {
+    padding: 6px !important;
+    width: 36px;
+    justify-content: center;
+  }
+
+  .header__btn--exit .icon-svg {
+    margin: 0;
+  }
+
+  .booking-table__time-header,
+  .booking-table__time-col {
+    width: 40px !important;
+    min-width: 40px !important;
+  }
+
+  .booking-table__col-header {
+    min-width: 80px;
+  }
+}
+
+@media (max-width: 768px) and (orientation: landscape) {
+  .header {
+    padding: 6px 10px !important;
+  }
+
+  .header__actions {
+    margin-top: 0;
+    width: auto;
+    order: initial;
+  }
+
+  .booking-table__time-header,
+  .booking-table__time-col {
+    width: 55px !important;
+    min-width: 55px !important;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .header__btn,
+  .date-picker__nav-btn,
+  .zone-filter__toggle,
+  .event-card {
+    min-height: 44px;
+  }
+
+  .header__btn {
+    padding: 10px 16px !important;
+  }
+
+  .header__btn--theme {
+    min-height: 44px;
+    width: 44px !important;
+  }
+
+  .event-card {
+    min-height: 24px;
+  }
+}
