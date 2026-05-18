@@ -263,6 +263,211 @@
   }
 }
 
+@media (max-width: 768px) {
+  .main {
+    padding: 12px !important;
+  }
+
+  .main__title {
+    font-size: 18px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .main__controls {
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    gap: 8px !important;
+    margin-bottom: 16px !important;
+    align-items: center;
+  }
+
+  .date-picker,
+  .zone-filter {
+    flex: 1;
+    min-width: 0;
+    padding: 0 !important;
+    gap: 4px !important;
+  }
+
+  .date-picker__label,
+  .zone-filter__label {
+    font-size: 11px !important;
+    white-space: nowrap;
+  }
+
+  .date-picker__list {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    gap: 2px !important;
+  }
+
+  .date-picker__btn {
+    min-width: 60px !important;
+    padding: 4px 6px !important;
+    flex-shrink: 0;
+  }
+
+  .date-picker__date {
+    font-size: 11px !important;
+    font-weight: 600;
+  }
+
+  .date-picker__sublabel {
+    font-size: 9px !important;
+    opacity: 0.7;
+  }
+
+  .date-picker__list {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
+
+  .date-picker__list::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .date-picker__list::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 2px;
+  }
+
+  .date-picker__list::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 2px;
+  }
+
+  .zone-filter__list {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    gap: 4px !important;
+    flex-wrap: nowrap;
+  }
+
+  .zone-filter__btn {
+    padding: 4px 10px !important;
+    font-size: 12px !important;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .booking-table {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .main__title {
+    font-size: 16px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .main__controls {
+    flex-direction: column !important;
+    align-items: stretch;
+    gap: 12px !important;
+  }
+
+  .date-picker__list {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
+    gap: 4px !important;
+    overflow-x: visible !important;
+    padding-bottom: 0;
+  }
+
+  .date-picker__btn {
+    min-width: 55px !important;
+    padding: 4px 4px !important;
+    width: 100%;
+    text-align: center;
+  }
+
+  .date-picker__date {
+    font-size: 10px !important;
+    line-height: 1.2;
+  }
+
+  .date-picker__sublabel {
+    font-size: 8px !important;
+    line-height: 1.1;
+  }
+
+  .zone-filter__list {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 4px !important;
+    overflow-x: visible !important;
+    padding-bottom: 0;
+  }
+
+  .zone-filter__btn {
+    padding: 3px 6px !important;
+    font-size: 10px !important;
+    width: 100%;
+    text-align: center;
+  }
+
+  .main__title {
+    display: none;
+  }
+
+  .main__controls {
+    margin-bottom: 12px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .date-picker__list {
+    display: flex !important;
+    grid-template-columns: none !important;
+    overflow-x: auto !important;
+    padding-bottom: 4px;
+    gap: 2px !important;
+  }
+
+  .date-picker__btn {
+    min-width: 50px !important;
+    padding: 3px 4px !important;
+    flex-shrink: 0;
+  }
+
+  .date-picker__date {
+    font-size: 9px !important;
+    line-height: 1.1;
+  }
+
+  .date-picker__sublabel {
+    font-size: 7px !important;
+    line-height: 1;
+  }
+
+  .zone-filter__list {
+    display: flex !important;
+    grid-template-columns: none !important;
+    overflow-x: auto !important;
+    padding-bottom: 4px;
+    gap: 3px !important;
+  }
+
+  .zone-filter__btn {
+    padding: 2px 5px !important;
+    font-size: 9px !important;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .main {
+    padding: 8px !important;
+  }
+
+  .main__controls {
+    gap: 8px !important;
+    margin-bottom: 8px !important;
+  }
+}
+
 @media (hover: none) and (pointer: coarse) {
   .header__btn,
   .date-picker__nav-btn,
@@ -282,5 +487,10 @@
 
   .event-card {
     min-height: 24px;
+  }
+
+  .date-picker__btn,
+  .zone-filter__btn {
+    min-height: 40px;
   }
 }

@@ -46,4 +46,50 @@ import BookingTable from './components/BookingTable/BookingTable.vue'
   gap: 16px;
   margin-bottom: 24px;
 }
+
+@media (max-width: 768px) {
+  .app .main {
+    padding: 12px;
+    overflow: auto; /* Восстанавливаем вертикальный скролл */
+  }
+
+  .app .main__title {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  .app .main__controls {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+    align-items: center;
+    overflow: visible;
+  }
+}
+
+@media (max-width: 480px) {
+  .app .main__title {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  .app .main__controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .app .main {
+    padding: 8px;
+    overflow: auto;
+  }
+
+  .app .main__controls {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+}
 </style>

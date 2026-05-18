@@ -95,4 +95,72 @@ function formatDay(dateStr: string): { date: string; label: string } {
   font-size: 12px;
   opacity: 0.8;
 }
+
+@media (max-width: 768px) {
+  .date-picker .date-picker__list {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+    gap: 4px;
+    max-width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+  }
+
+  .date-picker .date-picker__btn {
+    min-width: 70px;
+    padding: 6px 8px;
+    flex-shrink: 0;
+    height: auto;
+  }
+
+  .date-picker .date-picker__date {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .date-picker .date-picker__sublabel {
+    font-size: 10px;
+    opacity: 0.7;
+    line-height: 1.1;
+  }
+}
+
+@media (max-width: 480px) {
+  .date-picker .date-picker__btn {
+    min-width: 65px;
+    padding: 5px 6px;
+  }
+
+  .date-picker .date-picker__date {
+    font-size: 11px;
+  }
+
+  .date-picker .date-picker__sublabel {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 360px) {
+  .date-picker .date-picker__btn {
+    min-width: 60px;
+    padding: 4px 5px;
+  }
+
+  .date-picker .date-picker__date {
+    font-size: 10px;
+  }
+
+  .date-picker .date-picker__sublabel {
+    font-size: 8px;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .date-picker .date-picker__btn {
+    min-height: 44px;
+    min-width: 70px;
+  }
+}
 </style>
