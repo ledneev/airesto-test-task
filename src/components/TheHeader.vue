@@ -131,10 +131,10 @@ watch(searchQuery, (newQuery) => {
           </div>
         </div>
       </div>
-      <button class="header__btn" @click="toggleTheme" title="Переключить тему">
-        <IconSvg name="theme" :size="24" />
+      <button class="header__btn header__btn--theme" @click="toggleTheme" title="Переключить тему">
+        <IconSvg name="theme" :size="34" />
       </button>
-      <button class="header__btn">
+      <button class="header__btn header__btn--exit">
         <IconSvg name="exit" :size="16" />
         <span>Выйти</span>
       </button>
@@ -170,22 +170,37 @@ watch(searchQuery, (newQuery) => {
 }
 
 .header__btn {
-  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   border-radius: 6px;
   border: 1px solid var(--color-border);
   background: transparent;
   color: var(--color-text);
   cursor: pointer;
   transition: background 0.2s;
+  height: 38px;
+  box-sizing: border-box;
 }
 
 .header__btn:hover {
   background: var(--color-bg-hover);
 }
 
-.header__btn:first-child img {
-  width: 24px;
-  height: 24px;
+.header__btn--theme {
+  padding: 0;
+  width: 38px;
+  min-width: 38px;
+}
+
+.header__btn--theme .icon-svg {
+  width: 34px;
+  height: 34px;
+}
+
+.header__btn--exit {
+  padding: 8px 16px;
 }
 
 .header__search-wrapper {
