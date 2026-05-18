@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted, nextTick } from "vue";
+import { computed, ref, onMounted, onUnmounted, nextTick, watch } from "vue";
 import { useBookingStore } from "../../stores/bookingStore";
 import { mergeEvents, positionEvents } from "../../utils/layout";
 import {
@@ -69,6 +69,38 @@ function updateCurrentTime() {
 }
 
 let timeInterval: ReturnType<typeof setInterval>;
+
+function scrollToEvent(id: string | number) {
+  if (!tableRef.value) return;
+
+  const eventElement = tableRef.value.querySelector(`[data-event-id="${id}"]`);
+  if (!eventElement) return;
+
+  const container = tableRef.value;
+  const elementRect = eventElement.getBoundingClientRect();
+  const containerRect = container.getBoundingClientRect();
+
+  // Calculate scroll adjustments
+  const scrollTop = container.scrollTop;
+  const scrollLeft = container.scrollLeft;
+
+  const targetScrollTop = scrollTop + (elementRect.top - containerRect.top) - (containerRect.height / 2) + (elementRect.height / 2);
+  const targetScrollLeft = scrollLeft + (elementRect.left - containerRect.left) - (containerRect.width / 2) + (elementRect.width / 2);
+
+  container.scrollTo({
+    top: Math.max(0, targetScrollTop),
+    left: Math.max(0, targetScrollLeft),
+    behavior: 'smooth'
+  });
+}
+
+watch(() => store.scrollToEventId, (newId) => {
+  if (newId) {
+    nextTick(() => {
+      scrollToEvent(newId);
+    });
+  }
+});
 
 onMounted(async () => {
   await nextTick();

@@ -1,9 +1,14 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useBookingStore } from '../../stores/bookingStore'
 import type { PositionedEvent } from '../../types'
 
 const props = defineProps<{
   event: PositionedEvent
 }>()
+
+const store = useBookingStore()
+const isHighlighted = computed(() => store.searchedEventId === props.event.id)
 
 interface EventStyle {
   bg: string
@@ -52,7 +57,8 @@ const isOrder = props.event.type === 'order' && !isBanquet
 
 <template>
   <div
-    class="event-card"
+    :class="['event-card', { 'event-card--highlighted': isHighlighted }]"
+    :data-event-id="event.id"
     :style="{
       top: `${event.top}%`,
       height: `${event.height}%`,
@@ -113,6 +119,13 @@ const isOrder = props.event.type === 'order' && !isBanquet
 .event-card:hover {
   filter: brightness(1.4);
   z-index: 100 !important;
+  overflow: visible;
+}
+
+.event-card--highlighted {
+  box-shadow: 0 0 0 3px var(--color-accent), 0 0 10px rgba(59, 130, 246, 0.5);
+  filter: brightness(1.3);
+  z-index: 101 !important;
   overflow: visible;
 }
 

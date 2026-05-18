@@ -7,6 +7,8 @@ export const useBookingStore = defineStore("booking", () => {
   const data = ref<BookingResponse>(mockData);
   const selectedDate = ref<string>(mockData.current_day);
   const activeZones = ref<Zone[]>(["1 этаж", "2 этаж", "Банкетный зал"]);
+  const searchedEventId = ref<string | number | null>(null);
+  const scrollToEventId = ref<string | number | null>(null);
 
   const restaurant = computed(() => data.value.restaurant);
   const availableDays = computed(() => data.value.available_days);
@@ -38,10 +40,23 @@ export const useBookingStore = defineStore("booking", () => {
     return activeZones.value.includes(zone);
   }
 
+  function setSearchedEventId(id: string | number | null) {
+    searchedEventId.value = id;
+  }
+
+  function requestScrollToEvent(id: string | number) {
+    scrollToEventId.value = id;
+    setTimeout(() => {
+      scrollToEventId.value = null;
+    }, 100);
+  }
+
   return {
     data,
     selectedDate,
     activeZones,
+    searchedEventId,
+    scrollToEventId,
     restaurant,
     availableDays,
     allZones,
@@ -49,5 +64,7 @@ export const useBookingStore = defineStore("booking", () => {
     selectDate,
     toggleZone,
     isZoneActive,
+    setSearchedEventId,
+    requestScrollToEvent,
   };
 });
