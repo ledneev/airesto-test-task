@@ -85,13 +85,13 @@ const isOrder = props.event.type === 'order' && !isBanquet
         <span class="event-card__name">
           {{ event.name }}; {{ event.num_people }}чел
         </span>
+        <span class="event-card__time">
+          {{ formatTime(event.start_time) }}-{{ formatTime(event.end_time) }}
+        </span>
         <span class="event-card__status-badge">{{ statusLabel }}</span>
         <span class="event-card__phone">
           <img src="../../assets/img/phone.svg" alt="" aria-hidden="true">
           {{ event.phone_number?.slice(-4) }}
-        </span>
-        <span class="event-card__time">
-          {{ formatTime(event.start_time) }}-{{ formatTime(event.end_time) }}
         </span>
       </template>
 
@@ -183,7 +183,7 @@ const isOrder = props.event.type === 'order' && !isBanquet
 }
 
 .event-card__time {
-  margin-top: auto;
   color: var(--color-text-muted);
+  margin-bottom: 2px;
 }
 </style>

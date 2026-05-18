@@ -284,17 +284,6 @@ onUnmounted(() => {
   pointer-events: none;
 }
 
-.booking-table__current-time::before {
-  content: "";
-  position: absolute;
-  left: -4px;
-  top: -3px;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #ef4444;
-}
-
 .booking-table__current-time-indicator {
   position: absolute;
   left: 0;
