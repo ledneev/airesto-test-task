@@ -9,6 +9,7 @@ import {
   minutesToTimeString,
   timeStringToMinutes,
 } from "../../utils/time";
+import { createGlobalTouchHandlers } from "../../utils/touchSelection";
 import EventCard from "./EventCard.vue";
 
 import SelectionOverlay from "./SelectionOverlay.vue";
@@ -134,6 +135,13 @@ function handleMouseup() {
   }
 }
 
+const touchHandlers = createGlobalTouchHandlers(
+  handleColMousedown,
+  handleColMousemove,
+  handleMouseup
+);
+
+
 onMounted(async () => {
   await nextTick();
 
@@ -165,12 +173,18 @@ onMounted(async () => {
   timeInterval = setInterval(updateCurrentTime, 60_000);
 
   document.addEventListener("mouseup", handleMouseup);
+  document.addEventListener("touchmove", touchHandlers.handleGlobalTouchMove, { passive: false });
+  document.addEventListener("touchend", touchHandlers.handleTouchEnd);
+  document.addEventListener("touchcancel", touchHandlers.handleTouchCancel);
 });
 
 onUnmounted(() => {
   resizeObserver?.disconnect();
   clearInterval(timeInterval);
   document.removeEventListener("mouseup", handleMouseup);
+  document.removeEventListener("touchmove", touchHandlers.handleGlobalTouchMove);
+  document.removeEventListener("touchend", touchHandlers.handleTouchEnd);
+  document.removeEventListener("touchcancel", touchHandlers.handleTouchCancel);
 });
 
 const currentTimePercent = ref<number | null>(null);
@@ -277,6 +291,7 @@ watch(
               v-for="{ table, events, localEvents } in tablesWithEvents"
               :key="table.id"
               class="booking-table__col"
+              :data-table-id="table.id"
               :style="{
                 width: `${colWidth}px`,
                 minWidth: `${colWidth}px`,
@@ -302,6 +317,21 @@ watch(
                       e.currentTarget as HTMLElement,
                     )
                 "
+                @touchstart.passive="false"
+                @touchstart="
+                  (e) =>
+                    touchHandlers.handleTouchStart(
+                      e as TouchEvent,
+                      table.id,
+                      e.currentTarget as HTMLElement,
+                    )
+                "
+                @touchmove.passive="false"
+                @touchmove="touchHandlers.handleGlobalTouchMove"
+                @touchend.passive="false"
+                @touchend="touchHandlers.handleTouchEnd"
+                @touchcancel.passive="false"
+                @touchcancel="touchHandlers.handleTouchCancel"
               >
                 <div
                   v-for="slot in timeSlots"
