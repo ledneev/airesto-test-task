@@ -1,21 +1,54 @@
-import type { CalendarEvent, PositionedEvent, Table } from "../types";
-import { calcPosition, isoToMinutes, timeStringToMinutes } from "./time";
+import type { CalendarEvent, PositionedEvent } from '../types'
+import type { Table } from '../types'
+import { isoToMinutes, calcPosition, timeStringToMinutes } from './time'
 
-const OVERLAP_OFFSET_PX = 4;
-const INTERSECTION_WINDOW_MINUTES = 30;
+const OVERLAP_OFFSET_PX = 4
+const INTERSECTION_WINDOW_MIN = 30
 
-function eventsOverlap(a: CalendarEvent, b: CalendarEvent): boolean {
-  return a.start_time < b.end_time && b.start_time < a.end_time;
+export function mergeEvents(table: Table, selectedDate: string): CalendarEvent[] {
+  const orders: CalendarEvent[] = table.orders
+    .filter(o => o.start_time.startsWith(selectedDate))
+    .map(o => ({
+      id: o.id,
+      type: 'order' as const,
+      status: o.status,
+      start_time: o.start_time,
+      end_time: o.end_time,
+    }))
+
+  const reservations: CalendarEvent[] = table.reservations
+    .filter(r => r.seating_time.startsWith(selectedDate))
+    .map(r => ({
+      id: r.id,
+      type: 'reservation' as const,
+      status: r.status,
+      start_time: r.seating_time,
+      end_time: r.end_time,
+      name: r.name_for_reservation,
+      num_people: r.num_people,
+      phone_number: r.phone_number,
+    }))
+
+  return [...orders, ...reservations]
 }
 
-function eventsIntersect(
+function doEventsOverlap(a: CalendarEvent, b: CalendarEvent): boolean {
+  return a.start_time < b.end_time && b.start_time < a.end_time
+}
+
+function startDiffMinutes(
   a: CalendarEvent,
   b: CalendarEvent,
   timezone: string,
-): boolean {
-  const aStart = isoToMinutes(a.start_time, timezone);
-  const bStart = isoToMinutes(b.start_time, timezone);
-  return Math.abs(aStart - bStart) <= INTERSECTION_WINDOW_MINUTES;
+): number {
+  return Math.abs(
+    isoToMinutes(a.start_time, timezone) - isoToMinutes(b.start_time, timezone)
+  )
+}
+
+interface EventGroup {
+  columns: CalendarEvent[][]
+  offsetPx: number
 }
 
 export function positionEvents(
@@ -24,101 +57,75 @@ export function positionEvents(
   closingTime: string,
   timezone: string,
 ): PositionedEvent[] {
-  if (!events.length) return [];
+  if (!events.length) return []
+
+  const openingMin = timeStringToMinutes(openingTime)
+  const closingMin = timeStringToMinutes(closingTime)
 
   const sorted = [...events].sort((a, b) =>
-    a.start_time.localeCompare(b.start_time),
-  );
-  const openingMinutes = timeStringToMinutes(openingTime);
-  const closingMinutes = timeStringToMinutes(closingTime);
+    a.start_time.localeCompare(b.start_time)
+  )
 
-  const columns: CalendarEvent[][] = [];
+  const result: PositionedEvent[] = []
+  const visited = new Set<string | number>()
+  const groups: CalendarEvent[][] = []
 
   for (const event of sorted) {
-    let placed = false;
+    if (visited.has(event.id)) continue
 
-    for (const column of columns) {
-      const lastInColumn = column[column.length - 1];
+    const group: CalendarEvent[] = [event]
+    visited.add(event.id)
 
-      if (
-        eventsIntersect(event, lastInColumn, timezone) &&
-        !eventsOverlap(event, lastInColumn)
-      ) {
-        column.push(event);
-        placed = true;
-        break;
-      }
-
-      if (!eventsOverlap(event, lastInColumn)) {
-        column.push(event);
-        placed = true;
-        break;
+    for (const other of sorted) {
+      if (visited.has(other.id)) continue
+      if (doEventsOverlap(event, other)) {
+        group.push(other)
+        visited.add(other.id)
       }
     }
 
-    if (!placed) {
-      columns.push([event]);
-    }
+    groups.push(group)
   }
 
-  const totalColumns = columns.length;
+  for (const group of groups) {
+    group.sort((a, b) => a.start_time.localeCompare(b.start_time))
 
-  const result: PositionedEvent[] = [];
+    const packs: CalendarEvent[][] = []
 
-  columns.forEach((column, colIndex) => {
-    column.forEach((event, eventIndex) => {
-      const startMinutes = isoToMinutes(event.start_time, timezone);
-      const endMinutes = isoToMinutes(event.end_time, timezone);
-      const { top, height } = calcPosition(
-        startMinutes,
-        endMinutes,
-        openingMinutes,
-        closingMinutes,
-      );
+    for (const event of group) {
+      let placed = false
+      for (const pack of packs) {
+        const packStart = pack[0]
+        if (startDiffMinutes(event, packStart, timezone) < INTERSECTION_WINDOW_MIN) {
+          pack.push(event)
+          placed = true
+          break
+        }
+      }
+      if (!placed) packs.push([event])
+    }
 
-      const overlapOffset = eventIndex * OVERLAP_OFFSET_PX;
+    packs.forEach((pack, packIndex) => {
+      const colCount = pack.length
+      const offsetPx = packIndex * OVERLAP_OFFSET_PX
 
-      result.push({
-        ...event,
-        top,
-        height,
-        left:
-          totalColumns > 1 ? (colIndex / totalColumns) * 100 : overlapOffset,
-        width: totalColumns > 1 ? 100 / totalColumns : 100,
-        zIndex: eventIndex,
-      });
-    });
-  });
+      pack.forEach((event, colIndex) => {
+        const startMin = isoToMinutes(event.start_time, timezone)
+        const endMin = isoToMinutes(event.end_time, timezone)
+        const { top, height } = calcPosition(startMin, endMin, openingMin, closingMin)
 
-  return result;
-}
+        result.push({
+          ...event,
+          top,
+          height,
+          left: colCount > 1 ? (colIndex / colCount) * 100 : offsetPx,
+          width: colCount > 1 ? 100 / colCount : 100,
+          zIndex: packIndex,
+          offsetPx: colCount === 1 ? offsetPx : 0,
+        })
+      })
+    })
+  }
 
-export function mergeEvents(
-  table: Table,
-  selectedDate: string,
-): CalendarEvent[] {
-  const orders: CalendarEvent[] = table.orders
-    .filter((o) => o.start_time.startsWith(selectedDate))
-    .map((o) => ({
-      id: o.id,
-      type: "order" as const,
-      status: o.status,
-      start_time: o.start_time,
-      end_time: o.end_time,
-    }));
-
-  const reservations: CalendarEvent[] = table.reservations
-    .filter((r) => r.seating_time.startsWith(selectedDate))
-    .map((r) => ({
-      id: r.id,
-      type: "reservation" as const,
-      status: r.status,
-      start_time: r.seating_time,
-      end_time: r.end_time,
-      name: r.name_for_reservation,
-      num_people: r.num_people,
-      phone_number: r.phone_number,
-    }));
-
-  return [...orders, ...reservations];
+  return result
 }

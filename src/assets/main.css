@@ -1,4 +1,6 @@
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -15,19 +17,31 @@
   --color-order-new: #1a3a4a;
   --color-order-bill: #2d3748;
   --color-order-closed: #1e2d3d;
-  --color-order-banquet: #7B439E;
+  --color-order-banquet: #7b439e;
   --color-reservation-queue: #1a3a2a;
   --color-reservation-new: #3d2010;
   --color-reservation-application: #1a2a3a;
   --color-reservation-open: #1a3a4a;
   --color-reservation-closed: #2a1a1a;
+  --color-order-bg: rgba(127, 215, 204, 0.16);
+  --color-order-border: #7fd7cc;
+
+  --color-banquet-bg: rgba(179, 72, 247, 0.16);
+  --color-banquet-border: #7b439e;
+
+  --color-queue-bg: rgba(0, 151, 253, 0.16);
+  --color-queue-border: #007aff;
+
+  --color-reservation-bg: rgba(255, 112, 67, 0.16);
+  --color-reservation-border: #ff7043;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   background: var(--color-bg);
   color: var(--color-text);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 14px;
 }
 

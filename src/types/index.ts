@@ -62,9 +62,10 @@ export interface CalendarEvent {
 }
 
 export interface PositionedEvent extends CalendarEvent {
-  top: number;
-  height: number;
-  left: number;
-  width: number;
-  zIndex: number;
+  top: number
+  height: number
+  left: number
+  width: number
+  zIndex: number
+  offsetPx: number
 }

@@ -7,6 +7,8 @@ export const mockData: BookingResponse = {
     '2025-04-06',
     '2025-04-07',
     '2025-04-08',
+    '2025-04-09',
+    '2025-04-10',
   ],
   current_day: '2025-04-04',
   restaurant: {
@@ -106,6 +108,138 @@ export const mockData: BookingResponse = {
         },
       ],
     },
+    {
+      id: 'table-9',
+      capacity: 2,
+      number: '7',
+      zone: '1 этаж',
+      orders: [
+        {
+          id: 'order-12',
+          status: 'New',
+          start_time: '2025-04-04T12:00:00+10:00',
+          end_time: '2025-04-04T13:30:00+10:00',
+        },
+        {
+          id: 'order-13',
+          status: 'Bill',
+          start_time: '2025-04-04T17:00:00+10:00',
+          end_time: '2025-04-04T18:30:00+10:00',
+        },
+      ],
+      reservations: [
+        {
+          id: 10,
+          name_for_reservation: 'Екатерина',
+          num_people: 2,
+          phone_number: '+79888888888',
+          status: 'Новая',
+          seating_time: '2025-04-04T19:00:00+10:00',
+          end_time: '2025-04-04T20:30:00+10:00',
+        },
+        {
+          id: 11,
+          name_for_reservation: 'Денис',
+          num_people: 2,
+          phone_number: '+79777777777',
+          status: 'Заявка',
+          seating_time: '2025-04-04T20:45:00+10:00',
+          end_time: '2025-04-04T22:30:00+10:00',
+        },
+      ],
+    },
+    {
+      id: 'table-10',
+      capacity: 6,
+      number: '8',
+      zone: '1 этаж',
+      orders: [
+        {
+          id: 'order-14',
+          status: 'Closed',
+          start_time: '2025-04-04T11:30:00+10:00',
+          end_time: '2025-04-04T13:00:00+10:00',
+        },
+        {
+          id: 'order-15',
+          status: 'New',
+          start_time: '2025-04-04T14:00:00+10:00',
+          end_time: '2025-04-04T19:30:00+10:00',
+        },
+        {
+          id: 'order-65',
+          status: 'New',
+          start_time: '2025-04-04T15:00:00+10:00',
+          end_time: '2025-04-04T16:45:00+10:00',
+        },
+        {
+          id: 'order-75',
+          status: 'New',
+          start_time: '2025-04-04T15:10:00+10:00',
+          end_time: '2025-04-04T16:55:00+10:00',
+        },
+        {
+          id: 'order-85',
+          status: 'New',
+          start_time: '2025-04-04T15:15:00+10:00',
+          end_time: '2025-04-04T17:00:00+10:00',
+        },
+        {
+          id: 'order-15',
+          status: 'New',
+          start_time: '2025-04-04T15:20:00+10:00',
+          end_time: '2025-04-04T17:50:00+10:00',
+        },
+      ],
+      reservations: [
+        {
+          id: 12,
+          name_for_reservation: 'Анна и компания',
+          num_people: 5,
+          phone_number: '+79666666666',
+          status: 'Открыт',
+          seating_time: '2025-04-04T18:00:00+10:00',
+          end_time: '2025-04-04T20:00:00+10:00',
+        },
+        {
+          id: 12,
+          name_for_reservation: 'Анна и компания',
+          num_people: 5,
+          phone_number: '+79666666666',
+          status: 'Открыт',
+          seating_time: '2025-04-04T21:00:00+10:00',
+          end_time: '2025-04-04T22:00:00+10:00',
+        },
+      ],
+    },
+    {
+      id: 'table-11',
+      capacity: 2,
+      number: '9',
+      zone: '1 этаж',
+      orders: [
+        {
+          id: 'order-16',
+          status: 'Bill',
+          start_time: '2025-04-04T14:00:00+10:00',
+          end_time: '2025-04-04T15:30:00+10:00',
+        },
+        {
+          id: 'order-17',
+          status: 'New',
+          start_time: '2025-04-04T16:00:00+10:00',
+          end_time: '2025-04-04T17:00:00+10:00',
+        },
+        {
+          id: 'order-18',
+          status: 'New',
+          start_time: '2025-04-04T19:30:00+10:00',
+          end_time: '2025-04-04T21:00:00+10:00',
+        },
+      ],
+      reservations: [],
+    },
+
     {
       id: 'table-4',
       capacity: 6,
@@ -216,6 +350,110 @@ export const mockData: BookingResponse = {
         },
       ],
     },
+
+    {
+      id: 'table-12',
+      capacity: 8,
+      number: '23',
+      zone: '2 этаж',
+      orders: [
+        {
+          id: 'order-19',
+          status: 'Banquet',
+          start_time: '2025-04-04T18:00:00+10:00',
+          end_time: '2025-04-04T22:00:00+10:00',
+        },
+      ],
+      reservations: [
+        {
+          id: 13,
+          name_for_reservation: 'Корпоратив ООО "Ромашка"',
+          num_people: 8,
+          phone_number: '+79555555555',
+          status: 'Новая',
+          seating_time: '2025-04-04T18:00:00+10:00',
+          end_time: '2025-04-04T22:00:00+10:00',
+        },
+      ],
+    },
+    {
+      id: 'table-13',
+      capacity: 4,
+      number: '24',
+      zone: '2 этаж',
+      orders: [
+        {
+          id: 'order-20',
+          status: 'New',
+          start_time: '2025-04-04T13:00:00+10:00',
+          end_time: '2025-04-04T14:30:00+10:00',
+        },
+        {
+          id: 'order-21',
+          status: 'Bill',
+          start_time: '2025-04-04T15:00:00+10:00',
+          end_time: '2025-04-04T16:15:00+10:00',
+        },
+        {
+          id: 'order-22',
+          status: 'Closed',
+          start_time: '2025-04-04T17:00:00+10:00',
+          end_time: '2025-04-04T18:45:00+10:00',
+        },
+      ],
+      reservations: [
+        {
+          id: 14,
+          name_for_reservation: 'Иван',
+          num_people: 3,
+          phone_number: '+79444444444',
+          status: 'Живая очередь',
+          seating_time: '2025-04-04T19:30:00+10:00',
+          end_time: '2025-04-04T21:00:00+10:00',
+        },
+      ],
+    },
+    {
+      id: 'table-14',
+      capacity: 2,
+      number: '25',
+      zone: '2 этаж',
+      orders: [
+        {
+          id: 'order-23',
+          status: 'Closed',
+          start_time: '2025-04-04T12:30:00+10:00',
+          end_time: '2025-04-04T13:45:00+10:00',
+        },
+        {
+          id: 'order-24',
+          status: 'New',
+          start_time: '2025-04-04T14:00:00+10:00',
+          end_time: '2025-04-04T15:30:00+10:00',
+        },
+      ],
+      reservations: [
+        {
+          id: 15,
+          name_for_reservation: 'Романтический ужин (Татьяна)',
+          num_people: 2,
+          phone_number: '+79333333333',
+          status: 'Новая',
+          seating_time: '2025-04-04T20:00:00+10:00',
+          end_time: '2025-04-04T22:30:00+10:00',
+        },
+        {
+          id: 16,
+          name_for_reservation: 'Алексей',
+          num_people: 2,
+          phone_number: '+79222222222',
+          status: 'Заявка',
+          seating_time: '2025-04-04T22:00:00+10:00',
+          end_time: '2025-04-04T23:30:00+10:00',
+        },
+      ],
+    },
+
     {
       id: 'table-8',
       capacity: 4,
