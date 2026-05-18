@@ -143,7 +143,9 @@ const isOrder = props.event.type === 'order' && !isBanquet
   overflow: visible;
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  min-width: 100%;
+  width: fit-content;
+  max-width: calc(100% + 40px);
+  min-width: min-content;
 }
 
 .event-card--highlighted {
