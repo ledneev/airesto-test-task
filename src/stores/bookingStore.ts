@@ -51,6 +51,99 @@ export const useBookingStore = defineStore("booking", () => {
     }, 100);
   }
 
+  interface SelectionState {
+    isSelecting: boolean;
+    isConfirming: boolean;
+    startTableId: string | null;
+    endTableId: string | null;
+    startMinutes: number | null;
+    endMinutes: number | null;
+  }
+
+  const selection = ref<SelectionState>({
+    isSelecting: false,
+    isConfirming: false,
+    startTableId: null,
+    endTableId: null,
+    startMinutes: null,
+    endMinutes: null,
+  });
+
+  function startSelection(tableId: string, minutes: number) {
+    selection.value = {
+      isSelecting: true,
+      isConfirming: false,
+      startTableId: tableId,
+      endTableId: tableId,
+      startMinutes: minutes,
+      endMinutes: minutes,
+    };
+  }
+
+  function updateSelection(tableId: string, minutes: number) {
+    if (!selection.value.isSelecting) return;
+    selection.value.endTableId = tableId;
+    selection.value.endMinutes = minutes;
+  }
+
+  function confirmSelection() {
+    selection.value.isSelecting = false;
+    selection.value.isConfirming = true;
+  }
+
+  function cancelSelection() {
+    selection.value = {
+      isSelecting: false,
+      isConfirming: false,
+      startTableId: null,
+      endTableId: null,
+      startMinutes: null,
+      endMinutes: null,
+    };
+  }
+
+  const selectionRange = computed(() => {
+    const s = selection.value;
+    if (
+      !s.startTableId ||
+      !s.endTableId ||
+      s.startMinutes === null ||
+      s.endMinutes === null
+    ) {
+      return null;
+    }
+
+    const tableIds = filteredTables.value.map((t) => t.id);
+    const startIdx = tableIds.indexOf(s.startTableId);
+    const endIdx = tableIds.indexOf(s.endTableId);
+
+    return {
+      fromTableIdx: Math.min(startIdx, endIdx),
+      toTableIdx: Math.max(startIdx, endIdx),
+      fromMinutes: Math.min(s.startMinutes, s.endMinutes),
+      toMinutes: Math.max(s.startMinutes, s.endMinutes),
+      tableIds: tableIds.slice(
+        Math.min(startIdx, endIdx),
+        Math.max(startIdx, endIdx) + 1,
+      ),
+    };
+  });
+
+  interface LocalEvent {
+    tableIds: string[];
+    fromMinutes: number;
+    toMinutes: number;
+    date: string;
+  }
+
+  const localEvents = ref<LocalEvent[]>([]);
+
+  function addLocalEvent(event: LocalEvent) {
+    localEvents.value.push(event);
+    // будь у нас АПИ тут был бы АПИ вызов
+    console.log("Сохранено в store:", event);
+  }
+
   return {
     data,
     selectedDate,
@@ -66,5 +159,13 @@ export const useBookingStore = defineStore("booking", () => {
     isZoneActive,
     setSearchedEventId,
     requestScrollToEvent,
+    selection,
+    selectionRange,
+    startSelection,
+    updateSelection,
+    confirmSelection,
+    cancelSelection,
+    localEvents,
+    addLocalEvent,
   };
 });

@@ -199,4 +199,67 @@ const isOrder = props.event.type === 'order' && !isBanquet
   color: var(--color-text-muted);
   margin-bottom: 2px;
 }
+
+.event-card:hover {
+  z-index: 200 !important;
+  overflow: visible;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transform: scale(1.1);
+}
+
+.event-card:hover .event-card__content {
+  overflow: visible;
+  white-space: normal;
+}
+
+.event-card:hover .event-card__name,
+.event-card:hover .event-card__type,
+.event-card:hover .event-card__status-label,
+.event-card:hover .event-card__time {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+}
+
+.event-card:hover {
+  z-index: 100 !important;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transform: scaleX(1.1);
+  transform-origin: left center;
+  overflow: visible;
+}
+
+.event-card {
+  transition: width 0.2s, backdrop-filter 0.2s;
+}
+
+.event-card:hover {
+  z-index: 100 !important;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  width: max-content !important;
+  min-width: 100%;
+  max-width: calc(var(--col-width, 160px) * 0.7);
+  overflow: visible;
+}
+
+.event-card:hover .event-card__content {
+  overflow: visible;
+  white-space: normal;
+}
+
+.event-card:hover .event-card__name,
+.event-card:hover .event-card__type,
+.event-card:hover .event-card__time,
+.event-card:hover .event-card__status-label,
+.event-card:hover .event-card__status-badge,
+.event-card:hover .event-card__phone,
+.event-card:hover .event-card__table {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+}
+
 </style>

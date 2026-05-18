@@ -8,6 +8,7 @@ import {
   timeStringToMinutes,
 } from "../../utils/time";
 import EventCard from "./EventCard.vue";
+import SelectionOverlay from "./SelectionOverlay.vue";
 
 const store = useBookingStore();
 
@@ -15,6 +16,7 @@ const tableRef = ref<HTMLElement>();
 const containerWidth = ref(0);
 
 const SLOT_HEIGHT = 60;
+const TIME_COL_WIDTH = 60;
 
 const timeSlots = computed(() =>
   generateTimeSlots(
@@ -26,8 +28,7 @@ const timeSlots = computed(() =>
 const columnHeight = computed(() => timeSlots.value.length * SLOT_HEIGHT);
 
 const colWidth = computed(() => {
-  const timeColWidth = 60;
-  const available = containerWidth.value - timeColWidth;
+  const available = containerWidth.value - TIME_COL_WIDTH;
   const count = tablesWithEvents.value.length;
   if (count === 0) return 160;
   return Math.max(120, available / count);
@@ -45,62 +46,54 @@ const tablesWithEvents = computed(() =>
   })),
 );
 
-let resizeObserver: ResizeObserver | null = null;
-
-const currentTimePercent = ref<number | null>(null);
-
-function updateCurrentTime() {
-  const now = getRestaurantTime(store.restaurant.timezone);
-  const hours = now.getHours();
-  const minutes = now.getMinutes();
-  const currentMin = hours * 60 + minutes;
-
+function getMinutesFromMouseY(
+  event: MouseEvent,
+  colInner: HTMLElement,
+): number {
+  const rect = colInner.getBoundingClientRect();
+  const relY =
+    event.clientY -
+    rect.top +
+    colInner.closest(".booking-table__scroll")!.scrollTop -
+    colInner.offsetTop;
+  const percent = Math.max(
+    0,
+    Math.min(1, (event.clientY - rect.top) / rect.height),
+  );
   const openingMin = timeStringToMinutes(store.restaurant.opening_time);
   const closingMin = timeStringToMinutes(store.restaurant.closing_time);
-
-
-  if (currentMin < openingMin || currentMin > closingMin) {
-    currentTimePercent.value = null;
-    return;
-  }
-
-  currentTimePercent.value =
-    ((currentMin - openingMin) / (closingMin - openingMin)) * 100;
+  const totalMin = closingMin - openingMin;
+  const rawMinutes = openingMin + percent * totalMin;
+  return Math.round(rawMinutes / 30) * 30;
 }
 
-let timeInterval: ReturnType<typeof setInterval>;
+function handleColMousedown(
+  event: MouseEvent,
+  tableId: string,
+  colInner: HTMLElement,
+) {
+  if ((event.target as HTMLElement).closest(".event-card")) return;
 
-function scrollToEvent(id: string | number) {
-  if (!tableRef.value) return;
-
-  const eventElement = tableRef.value.querySelector(`[data-event-id="${id}"]`);
-  if (!eventElement) return;
-
-  const container = tableRef.value;
-  const elementRect = eventElement.getBoundingClientRect();
-  const containerRect = container.getBoundingClientRect();
-
-  // Calculate scroll adjustments
-  const scrollTop = container.scrollTop;
-  const scrollLeft = container.scrollLeft;
-
-  const targetScrollTop = scrollTop + (elementRect.top - containerRect.top) - (containerRect.height / 2) + (elementRect.height / 2);
-  const targetScrollLeft = scrollLeft + (elementRect.left - containerRect.left) - (containerRect.width / 2) + (elementRect.width / 2);
-
-  container.scrollTo({
-    top: Math.max(0, targetScrollTop),
-    left: Math.max(0, targetScrollLeft),
-    behavior: 'smooth'
-  });
+  event.preventDefault();
+  const minutes = getMinutesFromMouseY(event, colInner);
+  store.startSelection(tableId, minutes);
 }
 
-watch(() => store.scrollToEventId, (newId) => {
-  if (newId) {
-    nextTick(() => {
-      scrollToEvent(newId);
-    });
+function handleColMousemove(
+  event: MouseEvent,
+  tableId: string,
+  colInner: HTMLElement,
+) {
+  if (!store.selection.isSelecting) return;
+  const minutes = getMinutesFromMouseY(event, colInner);
+  store.updateSelection(tableId, minutes);
+}
+
+function handleMouseup() {
+  if (store.selection.isSelecting) {
+    store.confirmSelection();
   }
-});
+}
 
 onMounted(async () => {
   await nextTick();
@@ -121,12 +114,72 @@ onMounted(async () => {
 
   updateCurrentTime();
   timeInterval = setInterval(updateCurrentTime, 60_000);
+
+  document.addEventListener("mouseup", handleMouseup);
 });
 
 onUnmounted(() => {
   resizeObserver?.disconnect();
   clearInterval(timeInterval);
+  document.removeEventListener("mouseup", handleMouseup);
 });
+
+const currentTimePercent = ref<number | null>(null);
+
+function updateCurrentTime() {
+  const now = getRestaurantTime(store.restaurant.timezone);
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  const currentMin = hours * 60 + minutes;
+  const openingMin = timeStringToMinutes(store.restaurant.opening_time);
+  const closingMin = timeStringToMinutes(store.restaurant.closing_time);
+
+  if (currentMin < openingMin || currentMin > closingMin) {
+    currentTimePercent.value = null;
+    return;
+  }
+
+  currentTimePercent.value =
+    ((currentMin - openingMin) / (closingMin - openingMin)) * 100;
+}
+
+let timeInterval: ReturnType<typeof setInterval>;
+let resizeObserver: ResizeObserver | null = null;
+
+function scrollToEvent(id: string | number) {
+  if (!tableRef.value) return;
+  const eventElement = tableRef.value.querySelector(`[data-event-id="${id}"]`);
+  if (!eventElement) return;
+  const container = tableRef.value;
+  const elementRect = eventElement.getBoundingClientRect();
+  const containerRect = container.getBoundingClientRect();
+  container.scrollTo({
+    top: Math.max(
+      0,
+      container.scrollTop +
+        elementRect.top -
+        containerRect.top -
+        containerRect.height / 2 +
+        elementRect.height / 2,
+    ),
+    left: Math.max(
+      0,
+      container.scrollLeft +
+        elementRect.left -
+        containerRect.left -
+        containerRect.width / 2 +
+        elementRect.width / 2,
+    ),
+    behavior: "smooth",
+  });
+}
+
+watch(
+  () => store.scrollToEventId,
+  (newId) => {
+    if (newId) nextTick(() => scrollToEvent(newId));
+  },
+);
 </script>
 
 <template>
@@ -175,11 +228,31 @@ onUnmounted(() => {
               v-for="{ table, events } in tablesWithEvents"
               :key="table.id"
               class="booking-table__col"
-              :style="{ width: `${colWidth}px`, minWidth: `${colWidth}px` }"
+              :style="{
+                width: `${colWidth}px`,
+                minWidth: `${colWidth}px`,
+                '--col-width': `${colWidth}px`,
+              }"
             >
               <div
                 class="booking-table__col-inner"
                 :style="{ height: `${columnHeight}px` }"
+                @mousedown="
+                  (e) =>
+                    handleColMousedown(
+                      e,
+                      table.id,
+                      e.currentTarget as HTMLElement,
+                    )
+                "
+                @mousemove="
+                  (e) =>
+                    handleColMousemove(
+                      e,
+                      table.id,
+                      e.currentTarget as HTMLElement,
+                    )
+                "
               >
                 <div
                   v-for="slot in timeSlots"
@@ -204,6 +277,11 @@ onUnmounted(() => {
           </tr>
         </tbody>
       </table>
+      <SelectionOverlay
+        :column-height="columnHeight"
+        :col-width="colWidth"
+        :time-col-width="TIME_COL_WIDTH"
+      />
     </div>
   </div>
 </template>
