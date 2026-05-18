@@ -3,12 +3,16 @@ import { computed, ref, onMounted, onUnmounted, nextTick, watch } from "vue";
 import { useBookingStore } from "../../stores/bookingStore";
 import { mergeEvents, positionEvents } from "../../utils/layout";
 import {
+  calcPosition,
   generateTimeSlots,
   getRestaurantTime,
+  minutesToTimeString,
   timeStringToMinutes,
 } from "../../utils/time";
 import EventCard from "./EventCard.vue";
+
 import SelectionOverlay from "./SelectionOverlay.vue";
+
 
 const store = useBookingStore();
 
@@ -45,20 +49,52 @@ const tablesWithEvents = computed(() =>
       store.restaurant.closing_time,
       store.restaurant.timezone,
     ),
+    localEvents: getLocalEventsForTable(table.id),
   })),
 );
+
+interface PositionedLocalEvent {
+  id: string;
+  top: number;
+  height: number;
+  fromTime: string;
+  toTime: string;
+  capacity: number;
+  totalTables: number;
+}
+
+function getLocalEventsForTable(tableId: string): PositionedLocalEvent[] {
+  const openingMin = timeStringToMinutes(store.restaurant.opening_time);
+  const closingMin = timeStringToMinutes(store.restaurant.closing_time);
+
+  return store
+    .getLocalEventsFor(tableId, store.selectedDate)
+    .map((e) => {
+      const { top, height } = calcPosition(
+        e.fromMinutes,
+        e.toMinutes,
+        openingMin,
+        closingMin,
+      );
+      return {
+        id: e.id,
+        top,
+        height,
+        fromTime: minutesToTimeString(e.fromMinutes),
+        toTime: minutesToTimeString(e.toMinutes),
+        capacity: e.capacity,
+        totalTables: e.tableIds.length,
+      };
+    });
+}
 
 function getMinutesFromMouseY(
   event: MouseEvent,
   colInner: HTMLElement,
 ): number {
   const rect = colInner.getBoundingClientRect();
-  const relY =
-    event.clientY -
-    rect.top +
-    colInner.closest(".booking-table__scroll")!.scrollTop -
-    colInner.offsetTop;
   const percent = Math.max(
+
     0,
     Math.min(1, (event.clientY - rect.top) / rect.height),
   );
@@ -238,7 +274,7 @@ watch(
             </td>
 
             <td
-              v-for="{ table, events } in tablesWithEvents"
+              v-for="{ table, events, localEvents } in tablesWithEvents"
               :key="table.id"
               class="booking-table__col"
               :style="{
@@ -285,6 +321,38 @@ watch(
                   :key="event.id"
                   :event="event"
                 />
+
+                <div
+                  v-for="local in localEvents"
+                  :key="local.id"
+                  class="booking-table__local-event"
+                  :style="{
+                    top: `${local.top}%`,
+                    height: `${local.height}%`,
+                  }"
+                  :title="`Бронь ${local.fromTime}–${local.toTime}`"
+                >
+                  <button
+                    class="booking-table__local-event-remove"
+                    type="button"
+                    title="Удалить"
+                    @mousedown.stop
+                    @click.stop="store.removeLocalEvent(local.id)"
+                  >
+                    ×
+                  </button>
+                  <span class="booking-table__local-event-title">Бронь</span>
+                  <span class="booking-table__local-event-time">
+                    {{ local.fromTime }}–{{ local.toTime }}
+                  </span>
+                  <span
+                    v-if="local.height > 4"
+                    class="booking-table__local-event-meta"
+                  >
+                    {{ local.capacity }} чел<template v-if="local.totalTables > 1">
+                      · {{ local.totalTables }} ст.</template>
+                  </span>
+                </div>
               </div>
             </td>
           </tr>
@@ -416,5 +484,57 @@ watch(
   height: 1px;
   background: #ef4444;
   pointer-events: none;
+}
+
+.booking-table__local-event {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  background: rgba(59, 130, 246, 0.18);
+  border: 1px solid #3b82f6;
+  border-left: 3px solid #3b82f6;
+  border-radius: 4px;
+  padding: 4px 6px;
+  font-size: 11px;
+  line-height: 14px;
+  color: var(--color-text);
+  z-index: 4;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.booking-table__local-event-title {
+  font-weight: 600;
+}
+
+.booking-table__local-event-time {
+  color: var(--color-text-muted);
+  font-size: 10px;
+}
+
+.booking-table__local-event-meta {
+  color: var(--color-text-muted);
+  font-size: 10px;
+}
+
+.booking-table__local-event-remove {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+.booking-table__local-event-remove:hover {
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--color-text);
 }
 </style>

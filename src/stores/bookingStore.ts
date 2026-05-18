@@ -1,7 +1,30 @@
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { mockData } from "../data/mockData";
 import type { BookingResponse, Zone } from "../types";
+
+export interface LocalEvent {
+  id: string;
+  tableIds: string[];
+  fromMinutes: number;
+  toMinutes: number;
+  date: string;
+  capacity: number;
+}
+
+const LOCAL_EVENTS_KEY = "airesto.localEvents.v1";
+
+function loadLocalEvents(): LocalEvent[] {
+  try {
+    const raw = localStorage.getItem(LOCAL_EVENTS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
 
 export const useBookingStore = defineStore("booking", () => {
   const data = ref<BookingResponse>(mockData);
@@ -129,20 +152,41 @@ export const useBookingStore = defineStore("booking", () => {
     };
   });
 
-  interface LocalEvent {
-    tableIds: string[];
-    fromMinutes: number;
-    toMinutes: number;
-    date: string;
-  }
+  const localEvents = ref<LocalEvent[]>(loadLocalEvents());
 
-  const localEvents = ref<LocalEvent[]>([]);
+  // При появлении API эту обвязку можно убрать и заменить вызовами /reservations.
+  watch(
+    localEvents,
+    (events) => {
+      try {
+        localStorage.setItem(LOCAL_EVENTS_KEY, JSON.stringify(events));
+      } catch {
+        // ignore quota / private mode
+      }
+    },
+    { deep: true },
+  );
 
-  function addLocalEvent(event: LocalEvent) {
-    localEvents.value.push(event);
+  function addLocalEvent(event: Omit<LocalEvent, "id">) {
+    const id =
+      typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? crypto.randomUUID()
+        : `local-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    localEvents.value.push({ ...event, id });
     // будь у нас АПИ тут был бы АПИ вызов
-    console.log("Сохранено в store:", event);
+    console.log("Сохранено в store:", { ...event, id });
   }
+
+  function removeLocalEvent(id: string) {
+    localEvents.value = localEvents.value.filter((e) => e.id !== id);
+  }
+
+  function getLocalEventsFor(tableId: string, date: string): LocalEvent[] {
+    return localEvents.value.filter(
+      (e) => e.date === date && e.tableIds.includes(tableId),
+    );
+  }
+
 
   return {
     data,
@@ -167,5 +211,7 @@ export const useBookingStore = defineStore("booking", () => {
     cancelSelection,
     localEvents,
     addLocalEvent,
+    removeLocalEvent,
+    getLocalEventsFor,
   };
 });

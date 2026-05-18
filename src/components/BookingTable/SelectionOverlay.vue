@@ -80,6 +80,7 @@ function handleCreate() {
     fromMinutes: range.value.fromMinutes,
     toMinutes: range.value.toMinutes,
     date: store.selectedDate,
+    capacity: totalCapacity.value,
   })
 
   store.cancelSelection()
@@ -106,6 +107,29 @@ function handleCancel() {
         zIndex: 50,
       }"
     />
+
+    <div
+      v-if="store.selection.isSelecting"
+      class="selection-tooltip"
+      :style="{
+        position: 'absolute',
+        top: `${overlayStyle.top + overlayStyle.height + 6}px`,
+        left: `${overlayStyle.left}px`,
+        zIndex: 150,
+      }"
+    >
+      <p class="selection-tooltip__time">
+        {{ fromTimeStr }} – {{ toTimeStr }}
+      </p>
+      <p class="selection-tooltip__meta">
+        {{ durationStr }} ·
+        Столы
+        <strong>
+          {{ selectedTables.map(t => `#${t?.number}`).join(' + ') }}
+        </strong>
+        · {{ totalCapacity }} чел
+      </p>
+    </div>
 
     <div
       v-if="store.selection.isConfirming"
@@ -159,6 +183,33 @@ function handleCancel() {
 .selection-overlay--confirming {
   background: rgba(59, 130, 246, 0.1);
 }
+
+.selection-tooltip {
+  background: #1f2937;
+  color: #fff;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.selection-tooltip__time {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 2px;
+}
+
+.selection-tooltip__meta {
+  margin: 0;
+  opacity: 0.85;
+}
+
+.selection-tooltip__meta strong {
+  font-weight: 600;
+}
+
 
 .selection-popup {
   background: var(--color-bg-secondary, #fff);
