@@ -9,6 +9,7 @@ const props = defineProps<{
   columnHeight: number
   colWidth: number
   timeColWidth: number
+  headerHeight: number
 }>()
 
 const range = computed(() => store.selectionRange)
@@ -21,8 +22,11 @@ const overlayStyle = computed(() => {
   const closingMin = timeStringToMinutes(store.restaurant.closing_time)
   const totalMin = closingMin - openingMin
 
-  const top = ((r.fromMinutes - openingMin) / totalMin) * 100
-  const height = ((r.toMinutes - r.fromMinutes) / totalMin) * 100
+  const top =
+    props.headerHeight +
+    ((r.fromMinutes - openingMin) / totalMin) * props.columnHeight
+  const height =
+    ((r.toMinutes - r.fromMinutes) / totalMin) * props.columnHeight
   const left = props.timeColWidth + r.fromTableIdx * props.colWidth
   const width = (r.toTableIdx - r.fromTableIdx + 1) * props.colWidth
 
@@ -71,7 +75,6 @@ function handleCreate() {
   console.log('Время начала:', fromTimeStr.value)
   console.log('Время окончания:', toTimeStr.value)
 
-  // Сохраняем в store
   store.addLocalEvent({
     tableIds: range.value.tableIds,
     fromMinutes: range.value.fromMinutes,
@@ -95,8 +98,8 @@ function handleCancel() {
       :class="{ 'selection-overlay--confirming': store.selection.isConfirming }"
       :style="{
         position: 'absolute',
-        top: `${overlayStyle.top}%`,
-        height: `${overlayStyle.height}%`,
+        top: `${overlayStyle.top}px`,
+        height: `${overlayStyle.height}px`,
         left: `${overlayStyle.left}px`,
         width: `${overlayStyle.width}px`,
         pointerEvents: 'none',
@@ -109,7 +112,7 @@ function handleCancel() {
       class="selection-popup"
       :style="{
         position: 'absolute',
-        top: `${overlayStyle.top}%`,
+        top: `${overlayStyle.top + overlayStyle.height + 8}px`,
         left: `${overlayStyle.left}px`,
         width: `${Math.max(overlayStyle.width, 300)}px`,
         zIndex: 200,

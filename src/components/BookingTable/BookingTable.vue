@@ -13,7 +13,9 @@ import SelectionOverlay from "./SelectionOverlay.vue";
 const store = useBookingStore();
 
 const tableRef = ref<HTMLElement>();
+const headerRef = ref<HTMLElement>();
 const containerWidth = ref(0);
+const headerHeight = ref(0);
 
 const SLOT_HEIGHT = 60;
 const TIME_COL_WIDTH = 60;
@@ -64,7 +66,8 @@ function getMinutesFromMouseY(
   const closingMin = timeStringToMinutes(store.restaurant.closing_time);
   const totalMin = closingMin - openingMin;
   const rawMinutes = openingMin + percent * totalMin;
-  return Math.round(rawMinutes / 30) * 30;
+  const SNAP_MIN = 5;
+  return Math.round(rawMinutes / SNAP_MIN) * SNAP_MIN;
 }
 
 function handleColMousedown(
@@ -101,9 +104,19 @@ onMounted(async () => {
   if (!tableRef.value) return;
 
   resizeObserver = new ResizeObserver((entries) => {
-    containerWidth.value = entries[0].contentRect.width;
+    for (const entry of entries) {
+      if (entry.target === tableRef.value) {
+        containerWidth.value = entry.contentRect.width;
+      } else if (entry.target === headerRef.value) {
+        headerHeight.value = entry.contentRect.height;
+      }
+    }
   });
   resizeObserver.observe(tableRef.value);
+  if (headerRef.value) {
+    headerHeight.value = headerRef.value.getBoundingClientRect().height;
+    resizeObserver.observe(headerRef.value);
+  }
 
   const openingSlot = timeSlots.value.findIndex(
     (slot) => slot === store.restaurant.opening_time,
@@ -186,7 +199,7 @@ watch(
   <div class="booking-table">
     <div class="booking-table__scroll" ref="tableRef">
       <table class="booking-table__inner">
-        <thead class="booking-table__head">
+        <thead class="booking-table__head" ref="headerRef">
           <tr>
             <th class="booking-table__time-header"></th>
             <th
@@ -281,6 +294,7 @@ watch(
         :column-height="columnHeight"
         :col-width="colWidth"
         :time-col-width="TIME_COL_WIDTH"
+        :header-height="headerHeight"
       />
     </div>
   </div>
@@ -298,6 +312,7 @@ watch(
   overflow: auto;
   height: 100%;
   width: 100%;
+  position: relative;
 }
 
 .booking-table__inner {
