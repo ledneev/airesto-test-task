@@ -2,6 +2,7 @@
 import { ref, onMounted, computed, watch } from 'vue';
 import { useBookingStore } from "../stores/bookingStore";
 import type { CalendarEvent } from '../types';
+import IconSvg from './IconSvg.vue';
 
 const store = useBookingStore();
 
@@ -106,7 +107,7 @@ watch(searchQuery, (newQuery) => {
     <div class="header__actions">
       <div class="header__search-wrapper" style="position: relative; margin-right: 5px;">
         <div class="header__search">
-          <img src="../assets/img/search.svg" alt="Поиск" class="header__search-icon" />
+          <IconSvg name="search" :size="20" class="header__search-icon" />
           <input
             v-model="searchQuery"
             @focus="showSuggestions = true"
@@ -131,10 +132,10 @@ watch(searchQuery, (newQuery) => {
         </div>
       </div>
       <button class="header__btn" @click="toggleTheme" title="Переключить тему">
-        <img src="../assets/img/theme.svg" alt="Переключить тему" />
+        <IconSvg name="theme" :size="24" />
       </button>
       <button class="header__btn">
-        <img src="../assets/img/exit.svg" alt="" aria-hidden="true" />
+        <IconSvg name="exit" :size="16" />
         <span>Выйти</span>
       </button>
     </div>
@@ -194,7 +195,7 @@ watch(searchQuery, (newQuery) => {
 .header__search {
   display: flex;
   align-items: center;
-  background: #1B1B1D;
+  background: var(--color-bg-secondary);
   border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 6px 12px;

@@ -82,6 +82,15 @@
 
   --color-reservation-bg: rgba(255, 112, 67, 0.16);
   --color-reservation-border: #ff7043;
+
+  --badge-neutral-bg: rgba(255, 255, 255, 0.12);
+  --badge-neutral-text: #ffffff;
+  --badge-success-bg: rgba(74, 201, 155, 0.32);
+  --badge-success-text: #ffffff;
+  --badge-accent-bg: #007aff;
+  --badge-accent-text: #ffffff;
+  --badge-info-bg: rgba(0, 151, 253, 0.1);
+  --badge-info-text: #0097fd;
 }
 
 html.theme-light {
@@ -109,6 +118,15 @@ html.theme-light {
   --color-queue-border: #3498db;
   --color-reservation-bg: rgba(255, 112, 67, 0.08);
   --color-reservation-border: #e67e22;
+
+  --badge-neutral-bg: rgba(0, 0, 0, 0.08);
+  --badge-neutral-text: #1a1a1a;
+  --badge-success-bg: rgba(74, 201, 155, 0.32);
+  --badge-success-text: #0a3d2b;
+  --badge-accent-bg: #007aff;
+  --badge-accent-text: #ffffff;
+  --badge-info-bg: rgba(0, 151, 253, 0.1);
+  --badge-info-text: #0070c9;
 }
 
 html,
@@ -133,13 +151,11 @@ button {
   font-size: inherit;
 }
 
-/* Custom scrollbar styles */
 .booking-table__scroll {
   scrollbar-width: thin;
   scrollbar-color: var(--color-border) transparent;
 }
 
-/* WebKit scrollbar */
 .booking-table__scroll::-webkit-scrollbar {
   width: 10px;
   height: 10px;

@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useBookingStore } from '../../stores/bookingStore'
 import type { PositionedEvent } from '../../types'
+import IconSvg from '../IconSvg.vue'
 
 const props = defineProps<{
   event: PositionedEvent
@@ -41,6 +42,19 @@ const labelMap: Record<string, string> = {
   'Закрыт':        'Отменен',
 }
 
+type BadgeVariant = 'neutral' | 'success' | 'accent' | 'info'
+
+const badgeVariantMap: Record<string, BadgeVariant> = {
+  New:     'neutral',
+  Bill:    'success',
+  Closed:  'neutral',
+  'Живая очередь': 'neutral',
+  'Новая':         'accent',
+  'Заявка':        'info',
+  'Открыт':        'success',
+  'Закрыт':        'neutral',
+}
+
 function formatTime(iso: string): string {
   return new Date(iso).toLocaleTimeString('ru-RU', {
     hour: '2-digit',
@@ -51,6 +65,7 @@ function formatTime(iso: string): string {
 
 const eventStyle = styleMap[props.event.status] ?? styleMap['New']
 const statusLabel = labelMap[props.event.status] ?? props.event.status
+const badgeVariant: BadgeVariant = badgeVariantMap[props.event.status] ?? 'neutral'
 const isBanquet = props.event.status === 'Banquet'
 const isOrder = props.event.type === 'order' && !isBanquet
 </script>
@@ -73,7 +88,10 @@ const isOrder = props.event.type === 'order' && !isBanquet
 
       <template v-if="isOrder">
         <span class="event-card__type">Заказ</span>
-        <span class="event-card__status-label">{{ statusLabel }}</span>
+        <span
+          class="event-card__status-badge"
+          :class="`event-card__status-badge--${badgeVariant}`"
+        >{{ statusLabel }}</span>
         <span class="event-card__time">
           {{ formatTime(event.start_time) }}-{{ formatTime(event.end_time) }}
         </span>
@@ -94,9 +112,12 @@ const isOrder = props.event.type === 'order' && !isBanquet
         <span class="event-card__time">
           {{ formatTime(event.start_time) }}-{{ formatTime(event.end_time) }}
         </span>
-        <span class="event-card__status-badge">{{ statusLabel }}</span>
+        <span
+          class="event-card__status-badge"
+          :class="`event-card__status-badge--${badgeVariant}`"
+        >{{ statusLabel }}</span>
         <span class="event-card__phone">
-          <img src="../../assets/img/phone.svg" alt="" aria-hidden="true">
+          <IconSvg name="phone" :size="12" />
           {{ event.phone_number?.slice(-4) }}
         </span>
       </template>
@@ -163,31 +184,45 @@ const isOrder = props.event.type === 'order' && !isBanquet
   overflow: visible;
 }
 
-.event-card__status-label,
 .event-card__status-badge {
   font-size: 8px;
   font-weight: 600;
   line-height: 8px;
-  color: var(--color-text-muted);
-}
-
-.event-card__status-badge {
-  background: rgba(255,255,255,0.1);
   padding: 1px 4px;
   border-radius: 2px;
   width: fit-content;
+  background: var(--badge-neutral-bg);
+  color: var(--badge-neutral-text);
+}
+
+.event-card__status-badge--neutral {
+  background: var(--badge-neutral-bg);
+  color: var(--badge-neutral-text);
+}
+
+.event-card__status-badge--success {
+  background: var(--badge-success-bg);
+  color: var(--badge-success-text);
+}
+
+.event-card__status-badge--accent {
+  background: var(--badge-accent-bg);
+  color: var(--badge-accent-text);
+}
+
+.event-card__status-badge--info {
+  background: var(--badge-info-bg);
+  color: var(--badge-info-text);
 }
 
 .event-card__table {
   font-size: 10px;
-  color: var(--color-text-muted);
 }
 
 .event-card__phone {
   display: flex;
   align-items: center;
   gap: 2px;
-  color: var(--color-text-muted);
 }
 
 .event-card__phone img {
@@ -196,7 +231,6 @@ const isOrder = props.event.type === 'order' && !isBanquet
 }
 
 .event-card__time {
-  color: var(--color-text-muted);
   margin-bottom: 2px;
 }
 
@@ -215,7 +249,6 @@ const isOrder = props.event.type === 'order' && !isBanquet
 
 .event-card:hover .event-card__name,
 .event-card:hover .event-card__type,
-.event-card:hover .event-card__status-label,
 .event-card:hover .event-card__time {
   white-space: normal;
   overflow: visible;
@@ -253,7 +286,6 @@ const isOrder = props.event.type === 'order' && !isBanquet
 .event-card:hover .event-card__name,
 .event-card:hover .event-card__type,
 .event-card:hover .event-card__time,
-.event-card:hover .event-card__status-label,
 .event-card:hover .event-card__status-badge,
 .event-card:hover .event-card__phone,
 .event-card:hover .event-card__table {
