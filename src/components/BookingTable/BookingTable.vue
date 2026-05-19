@@ -2,6 +2,7 @@
 import { computed, ref, onMounted, onUnmounted, nextTick, watch } from "vue";
 import { useBookingStore } from "../../stores/bookingStore";
 import { mergeEvents, positionEvents } from "../../utils/layout";
+import { computeHiddenFlags } from "../../utils/overlapDetection";
 import {
   calcPosition,
   generateTimeSlots,
@@ -42,16 +43,22 @@ const colWidth = computed(() => {
 });
 
 const tablesWithEvents = computed(() =>
-  store.filteredTables.map((table) => ({
-    table,
-    events: positionEvents(
+  store.filteredTables.map((table) => {
+    const events = positionEvents(
       mergeEvents(table, store.selectedDate),
       store.restaurant.opening_time,
       store.restaurant.closing_time,
       store.restaurant.timezone,
-    ),
-    localEvents: getLocalEventsForTable(table.id),
-  })),
+    );
+    
+    const eventsWithHidden = computeHiddenFlags(events);
+    
+    return {
+      table,
+      events: eventsWithHidden,
+      localEvents: getLocalEventsForTable(table.id),
+    };
+  }),
 );
 
 interface PositionedLocalEvent {

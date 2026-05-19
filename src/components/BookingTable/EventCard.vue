@@ -68,6 +68,18 @@ const statusLabel = labelMap[props.event.status] ?? props.event.status
 const badgeVariant: BadgeVariant = badgeVariantMap[props.event.status] ?? 'neutral'
 const isBanquet = props.event.status === 'Banquet'
 const isOrder = props.event.type === 'order' && !isBanquet
+
+const hiddenElements = computed(() => {
+  const eventWithHidden = props.event as any
+  return eventWithHidden.hiddenElements || {
+    hideType: false,
+    hideStatusBadge: false,
+    hideTime: false,
+    hideName: false,
+    hideTable: false,
+    hidePhone: false
+  }
+})
 </script>
 
 <template>
@@ -90,7 +102,10 @@ const isOrder = props.event.type === 'order' && !isBanquet
         <span class="event-card__type">Заказ</span>
         <span
           class="event-card__status-badge"
-          :class="`event-card__status-badge--${badgeVariant}`"
+          :class="[
+            `event-card__status-badge--${badgeVariant}`,
+            { 'event-card__status-badge--hidden': hiddenElements.hideStatusBadge }
+          ]"
         >{{ statusLabel }}</span>
         <span class="event-card__time">
           {{ formatTime(event.start_time) }}-{{ formatTime(event.end_time) }}
@@ -114,9 +129,15 @@ const isOrder = props.event.type === 'order' && !isBanquet
         </span>
         <span
           class="event-card__status-badge"
-          :class="`event-card__status-badge--${badgeVariant}`"
+          :class="[
+            `event-card__status-badge--${badgeVariant}`,
+            { 'event-card__status-badge--hidden': hiddenElements.hideStatusBadge }
+          ]"
         >{{ statusLabel }}</span>
-        <span class="event-card__phone">
+        <span
+          class="event-card__phone"
+          :class="{ 'event-card__phone--hidden': hiddenElements.hidePhone }"
+        >
           <IconSvg name="phone" :size="12" />
           {{ event.phone_number?.slice(-4) }}
         </span>
@@ -168,6 +189,26 @@ const isOrder = props.event.type === 'order' && !isBanquet
 .event-card:hover .event-card__content {
   overflow: visible;
   white-space: normal;
+}
+
+.event-card__type--hidden,
+.event-card__status-badge--hidden,
+.event-card__time--hidden,
+.event-card__name--hidden,
+.event-card__table--hidden,
+.event-card__phone--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.event-card:hover .event-card__type--hidden,
+.event-card:hover .event-card__status-badge--hidden,
+.event-card:hover .event-card__time--hidden,
+.event-card:hover .event-card__name--hidden,
+.event-card:hover .event-card__table--hidden,
+.event-card:hover .event-card__phone--hidden {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .event-card__type,

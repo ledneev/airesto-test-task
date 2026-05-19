@@ -245,7 +245,14 @@ export const mockData: BookingResponse = {
       capacity: 6,
       number: '20',
       zone: '2 этаж',
-      orders: [],
+      orders: [
+        {
+          id: 'order-189',
+          status: 'New',
+          start_time: '2025-04-04T13:35:00+10:00',
+          end_time: '2025-04-04T14:00:00+10:00',
+        },
+      ],
       reservations: [
         {
           id: 3,
@@ -289,7 +296,7 @@ export const mockData: BookingResponse = {
           num_people: 2,
           phone_number: '+79999999999',
           status: 'Закрыт',
-          seating_time: '2025-04-04T20:00:00+10:00',
+          seating_time: '2025-04-04T13:30:00+10:00',
           end_time: '2025-04-04T22:00:00+10:00',
         },
       ],
