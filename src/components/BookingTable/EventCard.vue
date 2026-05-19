@@ -162,7 +162,6 @@ const hiddenElements = computed(() => {
   filter: brightness(1.4);
   z-index: 100 !important;
   overflow: visible;
-  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   width: fit-content;
