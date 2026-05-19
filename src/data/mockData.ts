@@ -297,7 +297,7 @@ export const mockData: BookingResponse = {
           phone_number: '+79999999999',
           status: 'Закрыт',
           seating_time: '2025-04-04T13:30:00+10:00',
-          end_time: '2025-04-04T22:00:00+10:00',
+          end_time: '2025-04-04T15:00:00+10:00',
         },
       ],
     },

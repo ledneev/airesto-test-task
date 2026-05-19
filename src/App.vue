@@ -50,7 +50,7 @@ import BookingTable from './components/BookingTable/BookingTable.vue'
 @media (max-width: 768px) {
   .app .main {
     padding: 12px;
-    overflow: auto; /* Восстанавливаем вертикальный скролл */
+    overflow: auto;
   }
 
   .app .main__title {

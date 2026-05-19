@@ -163,7 +163,7 @@ function navigateRight() {
   transition: background 0.2s;
   text-align: left;
   min-width: 100px;
-  flex: 1;
+  flex: 0 0 auto;
 }
 
 .date-picker__btn:hover {

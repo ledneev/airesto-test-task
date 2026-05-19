@@ -1,39 +1,42 @@
-import type { CalendarEvent, PositionedEvent } from '../types'
-import type { Table } from '../types'
-import { isoToMinutes, calcPosition, timeStringToMinutes } from './time'
+import type { CalendarEvent, PositionedEvent } from "../types";
+import type { Table } from "../types";
+import { isoToMinutes, calcPosition, timeStringToMinutes } from "./time";
 
-const OVERLAP_OFFSET_PX = 4
-const INTERSECTION_WINDOW_MIN = 30
+const OVERLAP_OFFSET_PX = 4;
+const INTERSECTION_WINDOW_MIN = 30;
 
-export function mergeEvents(table: Table, selectedDate: string): CalendarEvent[] {
+export function mergeEvents(
+  table: Table,
+  selectedDate: string,
+): CalendarEvent[] {
   const orders: CalendarEvent[] = table.orders
-    .filter(o => o.start_time.startsWith(selectedDate))
-    .map(o => ({
+    .filter((o) => o.start_time.startsWith(selectedDate))
+    .map((o) => ({
       id: o.id,
-      type: 'order' as const,
+      type: "order" as const,
       status: o.status,
       start_time: o.start_time,
       end_time: o.end_time,
-    }))
+    }));
 
   const reservations: CalendarEvent[] = table.reservations
-    .filter(r => r.seating_time.startsWith(selectedDate))
-    .map(r => ({
+    .filter((r) => r.seating_time.startsWith(selectedDate))
+    .map((r) => ({
       id: r.id,
-      type: 'reservation' as const,
+      type: "reservation" as const,
       status: r.status,
       start_time: r.seating_time,
       end_time: r.end_time,
       name: r.name_for_reservation,
       num_people: r.num_people,
       phone_number: r.phone_number,
-    }))
+    }));
 
-  return [...orders, ...reservations]
+  return [...orders, ...reservations];
 }
 
 function doEventsOverlap(a: CalendarEvent, b: CalendarEvent): boolean {
-  return a.start_time < b.end_time && b.start_time < a.end_time
+  return a.start_time < b.end_time && b.start_time < a.end_time;
 }
 
 function startDiffMinutes(
@@ -42,8 +45,8 @@ function startDiffMinutes(
   timezone: string,
 ): number {
   return Math.abs(
-    isoToMinutes(a.start_time, timezone) - isoToMinutes(b.start_time, timezone)
-  )
+    isoToMinutes(a.start_time, timezone) - isoToMinutes(b.start_time, timezone),
+  );
 }
 
 export function positionEvents(
@@ -52,62 +55,82 @@ export function positionEvents(
   closingTime: string,
   timezone: string,
 ): PositionedEvent[] {
-  if (!events.length) return []
+  if (!events.length) return [];
 
-  const openingMin = timeStringToMinutes(openingTime)
-  const closingMin = timeStringToMinutes(closingTime)
+  const openingMin = timeStringToMinutes(openingTime);
+  const closingMin = timeStringToMinutes(closingTime);
 
   const sorted = [...events].sort((a, b) =>
-    a.start_time.localeCompare(b.start_time)
-  )
+    a.start_time.localeCompare(b.start_time),
+  );
 
-  const result: PositionedEvent[] = []
-  const visited = new Set<string | number>()
-  const groups: CalendarEvent[][] = []
+  const result: PositionedEvent[] = [];
+  const visited = new Set<string | number>();
+  const groups: CalendarEvent[][] = [];
 
   for (const event of sorted) {
-    if (visited.has(event.id)) continue
+    if (visited.has(event.id)) continue;
 
-    const group: CalendarEvent[] = [event]
-    visited.add(event.id)
+    const group: CalendarEvent[] = [event];
+    visited.add(event.id);
 
     for (const other of sorted) {
-      if (visited.has(other.id)) continue
+      if (visited.has(other.id)) continue;
       if (doEventsOverlap(event, other)) {
-        group.push(other)
-        visited.add(other.id)
+        group.push(other);
+        visited.add(other.id);
       }
     }
 
-    groups.push(group)
+    groups.push(group);
   }
 
   for (const group of groups) {
-    group.sort((a, b) => a.start_time.localeCompare(b.start_time))
+    group.sort((a, b) => a.start_time.localeCompare(b.start_time));
 
-    const packs: CalendarEvent[][] = []
+    const packs: CalendarEvent[][] = [];
 
     for (const event of group) {
-      let placed = false
+      let placed = false;
       for (const pack of packs) {
-        const packStart = pack[0]
-        if (startDiffMinutes(event, packStart, timezone) < INTERSECTION_WINDOW_MIN) {
-          pack.push(event)
-          placed = true
-          break
+        const packStart = pack[0];
+        if (
+          startDiffMinutes(event, packStart, timezone) < INTERSECTION_WINDOW_MIN
+        ) {
+          pack.push(event);
+          placed = true;
+          break;
         }
       }
-      if (!placed) packs.push([event])
+      if (!placed) packs.push([event]);
     }
 
     packs.forEach((pack, packIndex) => {
-      const colCount = pack.length
-      const offsetPx = packIndex * OVERLAP_OFFSET_PX
+      const colCount = pack.length;
 
       pack.forEach((event, colIndex) => {
-        const startMin = isoToMinutes(event.start_time, timezone)
-        const endMin = isoToMinutes(event.end_time, timezone)
-        const { top, height } = calcPosition(startMin, endMin, openingMin, closingMin)
+        const startMin = isoToMinutes(event.start_time, timezone);
+        const endMin = isoToMinutes(event.end_time, timezone);
+        const { top, height } = calcPosition(
+          startMin,
+          endMin,
+          openingMin,
+          closingMin,
+        );
+        let maxOverlapOffset = 0;
+        for (const placed of result) {
+          const placedStart = isoToMinutes(placed.start_time, timezone);
+          const placedEnd = isoToMinutes(placed.end_time, timezone);
+          const overlaps = startMin < placedEnd && endMin > placedStart;
+          if (overlaps && placed.offsetPx !== undefined) {
+            maxOverlapOffset = Math.max(
+              maxOverlapOffset,
+              placed.offsetPx + OVERLAP_OFFSET_PX,
+            );
+          }
+        }
+
+        const offsetPx = colCount > 1 ? 0 : maxOverlapOffset;
 
         result.push({
           ...event,
@@ -116,11 +139,11 @@ export function positionEvents(
           left: colCount > 1 ? (colIndex / colCount) * 100 : offsetPx,
           width: colCount > 1 ? 100 / colCount : 100,
           zIndex: packIndex,
-          offsetPx: colCount === 1 ? offsetPx : 0,
-        })
-      })
-    })
+          offsetPx,
+        });
+      });
+    });
   }
 
-  return result
+  return result;
 }
