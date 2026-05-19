@@ -81,35 +81,11 @@ export function computeHiddenFlags(events: PositionedEvent[]): PositionedEvent[]
       }
     }))
   }
-
-  console.log(`[Overlap Debug] Колонка с ${events.length} событиями:`)
-  events.forEach((event, i) => {
-    console.log(`  ${i+1}. ${event.name || 'Событие'} (id: ${event.id}): ${event.start_time}`)
-  })
   
-  const result = events.map(event => {
+  return events.map(event => {
     const otherEvents = events.filter(e => e.id !== event.id)
-
-    const debugInfo: string[] = []
-    otherEvents.forEach(other => {
-      const diff = computeStartTimeDiffMinutes(event, other)
-      const direction = diff > 0 ? 'позже' : 'раньше'
-      debugInfo.push(`    - ${other.name || 'Событие'} (${other.id}): ${Math.abs(diff)} мин (${direction})`)
-    })
-    
-    if (debugInfo.length > 0) {
-      console.log(`[Overlap Debug] Событие "${event.name || event.id}" (${event.start_time}):`)
-      debugInfo.forEach(info => console.log(info))
-    }
-    
     const hiddenElements = getHiddenElements(event, otherEvents)
     const isHidden = Object.values(hiddenElements).some(v => v === true)
-
-    if (isHidden) {
-      console.log(`[Overlap Debug]   -> Скрываем: status-badge: ${hiddenElements.hideStatusBadge}, phone: ${hiddenElements.hidePhone}`)
-    } else {
-      console.log(`[Overlap Debug]   -> Не скрываем`)
-    }
     
     return {
       ...event,
@@ -117,7 +93,4 @@ export function computeHiddenFlags(events: PositionedEvent[]): PositionedEvent[]
       hiddenElements
     }
   })
-  
-  console.log('[Overlap Debug] --- Конец отладки колонки ---')
-  return result
 }
