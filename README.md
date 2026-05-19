@@ -2,7 +2,7 @@
 
 Тестовое задание: страница просмотра бронирований для ресторана с интерактивной таблицей.
 
-🔗 **[Live Demo](https://airesto-test-task-6q1irjcej-ledneevs-projects.vercel.app/)**
+🔗 **[Live Demo](https://airesto-test-task-orpin.vercel.app/)**
 
 ---
 
