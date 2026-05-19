@@ -168,6 +168,11 @@ const hiddenElements = computed(() => {
   min-width: min-content;
 }
 
+html.theme-light .event-card:hover {
+  filter: none;
+  backdrop-filter: blur(4px);
+}
+
 .event-card--highlighted {
   box-shadow: 0 0 0 3px var(--color-accent), 0 0 10px rgba(59, 130, 246, 0.5);
   filter: brightness(1.3);
