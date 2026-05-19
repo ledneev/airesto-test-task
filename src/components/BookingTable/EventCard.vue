@@ -163,11 +163,9 @@ const hiddenElements = computed(() => {
   z-index: 100 !important;
   overflow: visible;
   backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
   width: fit-content;
   max-width: calc(100% + 40px);
   min-width: min-content;
-  background: rgba(255, 255, 255, 0.3);
 }
 
 .event-card--highlighted {
