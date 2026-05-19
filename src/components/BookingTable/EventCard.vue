@@ -167,6 +167,7 @@ const hiddenElements = computed(() => {
   width: fit-content;
   max-width: calc(100% + 40px);
   min-width: min-content;
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .event-card--highlighted {
